@@ -1,0 +1,121 @@
+/* App.css - MODIFIÉ POUR PLEINE LARGEUR */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+:root {
+  --color1: #166ab8;
+  --color2: #2a0030;
+  --color3: #2b3a79;
+  --color4: #a4bfe4;
+  --color5: #ffffff;
+  
+  --text-white: #ffffff;
+  --text-light: rgba(255, 255, 255, 0.9);
+  --text-gray: rgba(255, 255, 255, 0.7);
+  
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-white);
+  background: linear-gradient(135deg, 
+    var(--color2) 0%, 
+    var(--color3) 25%, 
+    var(--color1) 50%, 
+    var(--color4) 75%, 
+    var(--color5) 100%);
+  background-attachment: fixed;
+  min-height: 100vh;
+  line-height: 1.6;
+}
+
+/* App.css - AJOUTER POUR CENTRER TOUT */
+.App {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Container prend 100% de largeur */
+.container {
+  width: 100%;
+  padding: 0 40px;
+}
+
+/* Sections prennent 100% */
+section {
+  width: 100%;
+}
+
+.btn {
+  display: inline-block;
+  padding: 12px 28px;
+  background: var(--color5);
+  color: var(--color2);
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.btn:hover {
+  background: var(--color4);
+  transform: translateY(-2px);
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+  padding-bottom: 15px;
+  text-align: center;
+  color: var(--text-white);
+  letter-spacing: 2px;
+  width: 100%;
+}
+
+.section-title:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 4px;
+  background: var(--color5);
+  border-radius: 2px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+  
+  .section-title {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+}
