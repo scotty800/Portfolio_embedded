@@ -1,0 +1,246 @@
+/* components/Home.css - PLEINE LARGEUR */
+.home {
+  padding: 80px 0 100px;
+  width: 100%;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  margin-bottom: 100px;
+  width: 100%;
+}
+
+.hero-content {
+  padding-right: 40px;
+}
+
+.hero-title {
+  margin-bottom: 25px;
+  text-align: left;
+  width: 100%;
+}
+
+.hero-title-line {
+  display: block;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem;
+  line-height: 1;
+  letter-spacing: 3px;
+  text-align: left;
+}
+
+.hero-title-line.accent {
+  color: var(--color4);
+  font-size: 4.5rem;
+  margin: 10px 0;
+}
+
+.hero-subtitle {
+  font-size: 1.5rem;
+  color: var(--text-light);
+  margin-bottom: 25px;
+  font-weight: 300;
+  text-align: left;
+}
+
+.hero-description {
+  font-size: 1.1rem;
+  margin-bottom: 35px;
+  color: var(--text-gray);
+  line-height: 1.8;
+  text-align: left;
+  width: 100%;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.btn-outline {
+  display: inline-block;
+  padding: 12px 28px;
+  background: transparent;
+  color: var(--color5);
+  border: 2px solid var(--color5);
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.btn-outline:hover {
+  background: var(--color5);
+  color: var(--color2);
+}
+
+.hero-image {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+}
+
+.code-container {
+  background: rgba(22, 106, 184, 0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.code-header {
+  background: rgba(42, 0, 48, 0.8);
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.code-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.code-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.code-dot.red {
+  background: #ff5f56;
+}
+
+.code-dot.yellow {
+  background: #ffbd2e;
+}
+
+.code-dot.green {
+  background: #27ca3f;
+}
+
+.code-snippet {
+  padding: 25px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color5);
+}
+
+.code-snippet pre {
+  margin: 0;
+}
+
+.services {
+  width: 100%;
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 40px;
+  width: 100%;
+}
+
+.service-card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 40px 30px;
+  border-radius: 10px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: var(--transition);
+  text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.service-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.service-icon {
+  font-size: 3.5rem;
+  margin-bottom: 25px;
+}
+
+.service-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: var(--text-white);
+  font-family: 'Bebas Neue', sans-serif;
+  letter-spacing: 1px;
+}
+
+.service-card p {
+  color: var(--text-gray);
+  line-height: 1.7;
+}
+
+@media (max-width: 992px) {
+  .hero {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .hero-content {
+    padding-right: 0;
+    text-align: center;
+  }
+  
+  .hero-title,
+  .hero-title-line {
+    text-align: center;
+  }
+  
+  .hero-title-line {
+    font-size: 3rem;
+  }
+  
+  .hero-title-line.accent {
+    font-size: 3.5rem;
+  }
+  
+  .hero-subtitle,
+  .hero-description {
+    text-align: center;
+  }
+  
+  .hero-buttons {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 576px) {
+  .hero-title-line {
+    font-size: 2.2rem;
+  }
+  
+  .hero-title-line.accent {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.2rem;
+  }
+  
+  .hero-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .service-card {
+    padding: 30px 20px;
+  }
+}
