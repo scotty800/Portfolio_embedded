@@ -1,8 +1,11 @@
-// components/Projects.jsx - STRUCTURE COMME ACCUEIL
+// components/Projects.jsx - CODE COMPLET
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Projects.css';
 
 const Projects = () => {
+  const navigate = useNavigate();
+  
   const projects = [
     {
       id: 1,
@@ -48,6 +51,15 @@ const Projects = () => {
     }
   ];
 
+  const handleViewProject = (projectId) => {
+    // Tous les projets ouvrent leur page détaillée
+    navigate(`/project/${projectId}`);
+  };
+
+  const handleViewCode = (projectTitle) => {
+    alert(`Code source pour: ${projectTitle}\n(Lien GitHub à configurer)`);
+  };
+
   return (
     <section className="projects" id="projects">
       <div className="projects-container">
@@ -72,8 +84,18 @@ const Projects = () => {
                 <p className="project-description">{project.description}</p>
                 
                 <div className="project-actions">
-                  <button className="project-btn">Voir le projet</button>
-                  <button className="project-btn outline">Code source</button>
+                  <button 
+                    className="project-btn"
+                    onClick={() => handleViewProject(project.id)}
+                  >
+                    Voir le projet
+                  </button>
+                  <button 
+                    className="project-btn outline"
+                    onClick={() => handleViewCode(project.title)}
+                  >
+                    Code source
+                  </button>
                 </div>
               </div>
               
