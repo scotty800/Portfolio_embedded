@@ -1,4 +1,4 @@
-/* components/Home.css - CODE COMPLET */
+/* components/Home.css - AVEC PHOTO RECTANGULAIRE VERTICALE */
 .home {
   width: 100%;
   min-height: 100vh;
@@ -102,7 +102,7 @@
   transform: translateY(-3px);
 }
 
-/* SECTION PHOTO (remplace l'ancien snippet) */
+/* SECTION PHOTO - RECTANGULAIRE VERTICALE */
 .hero-photo-section {
   flex: 1;
   display: flex;
@@ -111,42 +111,74 @@
   padding: 20px;
 }
 
-.photo-placeholder {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  padding: 40px;
-  backdrop-filter: blur(10px);
-  border: 2px dashed rgba(255, 255, 255, 0.2);
-  text-align: center;
+.photo-container {
+  width: 280px; /* Largeur réduite pour vertical */
+  height: 380px; /* Hauteur plus grande pour vertical */
+  border-radius: 12px; /* Coins arrondis doux */
+  overflow: hidden;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+  transition: var(--transition);
+  position: relative;
+  background: rgba(255, 255, 255, 0.05); /* Fond au cas où la photo ne charge pas */
+}
+
+.photo-container:hover {
+  transform: translateY(-10px) scale(1.02);
+  border-color: var(--color4);
+  box-shadow: 0 25px 50px rgba(164, 191, 228, 0.4);
+}
+
+.profile-photo {
   width: 100%;
-  max-width: 400px;
+  height: 100%;
+  object-fit: cover; /* Remplit le conteneur sans déformation */
+  object-position: center top; /* Centre l'image verticalement, concentré sur le haut */
   transition: var(--transition);
 }
 
-.photo-placeholder:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: var(--color4);
-  transform: translateY(-5px);
+.photo-container:hover .profile-photo {
+  transform: scale(1.05); /* Légèrement plus de zoom au survol */
 }
 
-.photo-icon {
-  font-size: 4rem;
-  margin-bottom: 20px;
-  opacity: 0.7;
+/* Effet de brillance sur hover */
+.photo-container:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, 
+    transparent 0%, 
+    rgba(255, 255, 255, 0.08) 50%, 
+    transparent 100%);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none; /* Permet de cliquer à travers */
 }
 
-.photo-caption {
-  color: var(--text-white);
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 10px;
+.photo-container:hover:before {
+  opacity: 1;
 }
 
-.photo-instructions {
-  color: var(--text-gray);
-  font-size: 0.9rem;
-  opacity: 0.8;
-  line-height: 1.4;
+/* Effet de cadre élégant */
+.photo-container:after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.photo-container:hover:after {
+  border-color: rgba(164, 191, 228, 0.3);
 }
 
 /* Section technologies */
@@ -299,10 +331,9 @@
     width: 100%;
   }
   
-  .photo-placeholder {
-    max-width: 300px;
-    padding: 30px;
-    margin: 0 auto;
+  .photo-container {
+    width: 240px; /* Plus petit sur tablette */
+    height: 320px;
   }
   
   .hero-title {
@@ -353,6 +384,11 @@
   .stat-number {
     font-size: 2.5rem;
   }
+  
+  .photo-container {
+    width: 200px;
+    height: 270px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -373,38 +409,28 @@
     gap: 20px;
   }
   
-  .photo-placeholder {
-    padding: 25px 20px;
+  .photo-container {
+    width: 180px;
+    height: 240px;
+    border-width: 3px;
   }
   
-  .photo-icon {
-    font-size: 3rem;
-  }
-  
-  .photo-caption {
-    font-size: 1.1rem;
+  .stat-number {
+    font-size: 2.2rem;
   }
 }
 
-/* Styles pour la photo quand vous l'ajouterez */
-.profile-photo {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 15px;
+/* Option : Style avec ombre portée plus prononcée */
+.photo-container.shadow-effect {
+  box-shadow: 
+    0 15px 35px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.photo-container {
-  width: 100%;
-  max-width: 400px;
-  height: auto;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-  transition: var(--transition);
-}
-
-.photo-container:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+/* Option : Style avec bordure dégradée */
+.photo-container.gradient-border {
+  border: 4px solid transparent;
+  background: 
+    linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)) padding-box,
+    linear-gradient(45deg, var(--color4), var(--color5)) border-box;
 }

@@ -1,7 +1,10 @@
-// components/Home.jsx - CORRIGÉ (sans snippet code)
+// components/Home.jsx - AVEC VOTRE PHOTO
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
+
+// Import de votre photo
+import scottyPhoto from '../assets/scotty.jpg';
 
 const Home = () => {
   return (
@@ -30,14 +33,14 @@ const Home = () => {
             </div>
           </div>
           
-          {/* Remplacement du snippet par espace photo */}
+          {/* Section photo avec votre image */}
           <div className="hero-photo-section">
-            <div className="photo-placeholder">
-              <div className="photo-icon">📸</div>
-              <p className="photo-caption">Votre photo ici</p>
-              <p className="photo-instructions">
-                Remplacez cette section par votre photo de profil
-              </p>
+            <div className="photo-container">
+              <img 
+                src={scottyPhoto} 
+                alt="Scotty - Développeur Full Stack" 
+                className="profile-photo"
+              />
             </div>
           </div>
         </div>

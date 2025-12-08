@@ -1,4 +1,4 @@
-// components/Projects.jsx - CODE COMPLET
+// components/Projects.jsx - MODIFIÉ (projet 1 = Arduino ESP32)
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Projects.css';
@@ -9,10 +9,10 @@ const Projects = () => {
   const projects = [
     {
       id: 1,
-      title: "Application E-commerce",
-      description: "Plateforme de vente en ligne avec React, Redux et Stripe. Interface utilisateur moderne, panier d'achat, système de paiement sécurisé.",
-      technologies: ["React", "Redux", "Node.js", "MongoDB", "Stripe"],
-      icon: "🛒"
+      title: "Projet Arduino ESP32",
+      description: "Développement de systèmes embarqués intelligents avec microcontrôleurs ESP32 pour l'IoT, la domotique et l'automatisation industrielle.",
+      technologies: ["Arduino IDE", "C/C++", "ESP32", "IoT", "WiFi/BLE", "MQTT", "Capteurs"],
+      icon: "🔌"
     },
     {
       id: 2,
