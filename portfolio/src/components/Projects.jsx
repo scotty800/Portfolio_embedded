@@ -1,4 +1,4 @@
-// components/Projects.jsx - MODIFIÉ (projet 1 = Arduino ESP32)
+// components/Projects.jsx - MODIFIÉ (projet 5 = Mini Racer)
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Projects.css';
@@ -10,37 +10,37 @@ const Projects = () => {
     {
       id: 1,
       title: "Projet Arduino ESP32",
-      description: "Développement de systèmes embarqués intelligents avec microcontrôleurs ESP32 pour l'IoT, la domotique et l'automatisation industrielle.",
-      technologies: ["Arduino IDE", "C/C++", "ESP32", "IoT", "WiFi/BLE", "MQTT", "Capteurs"],
+      description: "Développement de systèmes embarqués intelligents avec microcontrôleurs ESP32 pour la domotique et l'automatisation industrielle.",
+      technologies: ["Arduino IDE", "C/C++", "ESP32", "Capteurs"],
       icon: "🔌"
     },
     {
       id: 2,
-      title: "Tableau de Bord Analytics",
-      description: "Visualisation de données en temps réel avec graphiques interactifs. Tableaux de bord personnalisables pour le suivi des performances.",
-      technologies: ["React", "D3.js", "Express", "Firebase", "Chart.js"],
-      icon: "📊"
+      title: "Projet IoT ESP32",
+      description: "Système IoT complet avec collecte de données environnementales, dashboard temps réel et notifications pour le monitoring intelligent.",
+      technologies: ["Arduino IDE", "C/C++", "ESP32", "WiFi/BLE", "MQTT", "WebSockets", "Capteurs"],
+      icon: "📡"
     },
     {
       id: 3,
-      title: "Réseau Social",
-      description: "Application de partage de contenu avec fonctionnalités de chat en temps réel, notifications et système d'amis.",
-      technologies: ["React", "Socket.io", "PostgreSQL", "AWS", "Redis"],
-      icon: "👥"
+      title: "Projet FPGA Simulation",
+      description: "Conception et simulation de circuits numériques avec VHDL et Vivado, incluant circuits combinatoires, séquentiels et synthèse sur FPGA.",
+      technologies: ["VHDL", "Xilinx Vivado", "FPGA", "ModelSim", "Circuit Design", "Timing Analysis"],
+      icon: "⚡"
     },
     {
       id: 4,
-      title: "Application Météo",
-      description: "Prévisions météo avec géolocalisation, notifications push et mode hors ligne. Application Progressive Web App (PWA).",
-      technologies: ["React", "API REST", "Service Workers", "PWA", "Geolocation API"],
-      icon: "🌤️"
+      title: "Projet FreeRTOS ESP32",
+      description: "Système temps réel multitâche avec FreeRTOS sur ESP32, gestion de périphériques via I2C, UART, SPI et synchronisation de tâches.",
+      technologies: ["FreeRTOS", "Arduino IDE", "C/C++", "ESP32", "I2C", "UART", "SPI", "Sémaphores", "Queues"],
+      icon: "⏱️"
     },
     {
       id: 5,
-      title: "Gestion de Projet",
-      description: "Outil de collaboration d'équipe avec tableaux Kanban, gestion des tâches, calendrier et chat intégré.",
-      technologies: ["React", "TypeScript", "GraphQL", "MongoDB", "WebSockets"],
-      icon: "📋"
+      title: "Projet Mini Racer",
+      description: "Jeu de course multijoueur en 3D développé avec Unity, offrant des courses frénétiques de 1 à 4 joueurs avec mécaniques de drift et power-ups.",
+      technologies: ["Unity", "C#", "Multiplayer", "3D Modeling", "Game Physics", "UI/UX", "Version Control"],
+      icon: "🏎️"
     },
     {
       id: 6,
