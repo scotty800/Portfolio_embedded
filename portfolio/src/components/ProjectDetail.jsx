@@ -1,4 +1,4 @@
-// components/ProjectDetail.jsx - CODE COMPLET CORRIGÉ
+// components/ProjectDetail.jsx - MODIFIÉ (projet 5 = 1 bloc seulement)
 import React from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import './ProjectDetail.css';
@@ -15,237 +15,349 @@ const ProjectDetail = () => {
 
   // DONNÉES POUR CHAQUE PROJET
 
-  // PROJET 1 - E-commerce
+  // PROJET 1 - Arduino ESP32 (inchangé)
   const project1Blocks = [
     {
       id: 1,
-      title: "Interface Utilisateur",
-      description: "Design moderne et responsive avec React et Material-UI",
-      icon: "🎨",
-      features: ["Design responsive", "Navigation intuitive", "Animations fluides", "Dark/Light mode"]
+      title: "Dégradé de Couleurs",
+      description: "Contrôle d'une LED RGB avec transitions fluides et ajustement via potentiomètre",
+      icon: "🌈",
+      features: [
+        "Contrôle LED RGB avec ESP32",
+        "Potentiomètre pour ajustement de teinte",
+        "Conversion HSV vers RGB",
+        "Transitions fluides entre couleurs",
+        "Interface utilisateur intuitive",
+        "Code modulaire et réutilisable"
+      ]
     },
     {
       id: 2,
-      title: "Panier d'Achat",
-      description: "Gestion complète du panier avec Redux State Management",
-      icon: "🛒",
-      features: ["Ajout/Suppression produits", "Quantités dynamiques", "Calcul automatique", "Sauvegarde locale"]
+      title: "Microchip - 74HC595",
+      description: "Contrôle d'un affichage défilant de 8 LEDs avec registre à décalage",
+      icon: "🔢",
+      features: [
+        "Puce 74HC595 pour contrôle multiple",
+        "Affichage défilant sur 8 LEDs",
+        "Effet arc-en-ciel scintillant",
+        "Allumage séquentiel dynamique",
+        "Optimisation de l'utilisation des GPIO",
+        "Synchronisation précise des LEDs"
+      ]
     },
     {
       id: 3,
-      title: "Paiement Sécurisé",
-      description: "Intégration Stripe pour paiements 100% sécurisés",
-      icon: "💳",
-      features: ["Stripe API intégrée", "Validation cartes", "Chiffrement SSL", "Emails de confirmation"]
+      title: "Détecteur de Mouvements",
+      description: "Détection de présence avec capteur PIR infrarouge et activation LED",
+      icon: "👁️",
+      features: [
+        "Capteur PIR pour détection infrarouge",
+        "Détection de mouvement humain/animal",
+        "Activation automatique de LED",
+        "Champ de vision réglable",
+        "Réglage sensibilité et délai",
+        "Sortie numérique pour contrôle"
+      ]
     },
     {
       id: 4,
-      title: "Backend Node.js",
-      description: "API REST robuste avec Express et MongoDB",
-      icon: "⚙️",
-      features: ["API RESTful complète", "Authentification JWT", "Base de données MongoDB", "Middleware de sécurité"]
+      title: "Affichage de Caractères",
+      description: "Affichage de messages sur écran LCD I2C avec compteur dynamique",
+      icon: "📟",
+      features: [
+        "Module I2C LCD1602",
+        "Affichage de messages personnalisés",
+        "Compteur automatique incrémental",
+        "Interface I2C simplifiée",
+        "Messages de bienvenue dynamiques",
+        "Gestion de l'actualisation d'écran"
+      ]
     },
     {
       id: 5,
-      title: "Gestion Produits",
-      description: "Système CRUD complet pour la gestion des produits",
-      icon: "📦",
-      features: ["Ajout/modification produits", "Catégories dynamiques", "Recherche avancée", "Filtres multiples"]
+      title: "Lumière Courante",
+      description: "Animation de bande LED WS2812 avec détection d'obstacles et changement de direction",
+      icon: "💫",
+      features: [
+        "Bande LED WS2812 programmable",
+        "Animation lumière courante",
+        "Détection d'obstacles",
+        "Changement direction automatique",
+        "Couleurs et motifs personnalisables",
+        "Synchronisation précise des LEDs"
+      ]
     },
     {
       id: 6,
-      title: "Dashboard Admin",
-      description: "Interface d'administration complète avec analytics",
-      icon: "📊",
-      features: ["Statistiques ventes", "Gestion commandes", "Rapports PDF", "Notifications en temps réel"]
+      title: "Contrôle Moteur",
+      description: "Pilotage de moteur avec circuit intégré L293D et contrôle PWM",
+      icon: "⚙️",
+      features: [
+        "Circuit intégré L293D",
+        "Contrôle bidirectionnel moteur",
+        "Signal PWM pour vitesse variable",
+        "Protection contre surcharge",
+        "Commande numérique précise",
+        "Applications robotiques"
+      ]
     }
   ];
 
-  // PROJET 2 - Tableau de Bord Analytics
+  // PROJET 2 - IoT ESP32 (inchangé)
   const project2Blocks = [
     {
       id: 1,
-      title: "Visualisation Données",
-      description: "Graphiques interactifs avec D3.js et Chart.js",
-      icon: "📈",
-      features: ["Graphiques en temps réel", "Zoom et panoramique", "Export PNG/PDF", "Personnalisation thèmes"]
+      title: "CheerLights",
+      description: "Réseau mondial de lumières synchronisées via MQTT pour contrôle couleur à distance",
+      icon: "🌍",
+      features: [
+        "Synchronisation mondiale des lumières",
+        "Abonnement MQTT au sujet cheerlights",
+        "Contrôle couleur à distance",
+        "Bande LED WS2812 programmable",
+        "Temps réel sans délai perceptible",
+        "Communauté internationale connectée"
+      ]
     },
     {
       id: 2,
-      title: "Dashboard Personnalisable",
-      description: "Widgets modulaires et dispositions flexibles",
-      icon: "🖥️",
-      features: ["Widgets drag & drop", "Layouts personnalisables", "Thèmes couleurs", "Mode plein écran"]
+      title: "Serveur Web Streaming Vidéo",
+      description: "Serveur web personnalisé pour streaming vidéo avec contrôle interactif de LEDs",
+      icon: "🎥",
+      features: [
+        "Création de page web personnalisée",
+        "Streaming vidéo en direct",
+        "Boutons interactifs ON/OFF",
+        "Contrôle luminosité LED",
+        "Interface utilisateur intuitive",
+        "Connexion WiFi stable"
+      ]
     },
     {
       id: 3,
-      title: "Analytics Avancés",
-      description: "Analyse de données en temps réel avec machine learning",
-      icon: "🧠",
-      features: ["Prédictions ML", "Tendances détectées", "Alertes automatiques", "Rapports intelligents"]
+      title: "Communication IoT avec MQTT",
+      description: "Protocole MQTT pour échange de données IoT avec LED, bouton et thermistor",
+      icon: "📡",
+      features: [
+        "Protocole MQTT publication/abonnement",
+        "Communication WiFi avec broker",
+        "Contrôle LED via sujets MQTT",
+        "Publication données température",
+        "Architecture client-serveur IoT",
+        "Sécurité et qualité de service"
+      ]
     },
     {
       id: 4,
-      title: "Intégration API",
-      description: "Connexion à multiples sources de données",
-      icon: "🔗",
-      features: ["REST APIs", "WebSockets", "Bases de données", "Services cloud"]
+      title: "Station Surveillance Connectée",
+      description: "Système de monitoring environnemental avec capteurs DHT11 et ultrasonique",
+      icon: "📊",
+      features: [
+        "Capteur température/humidité DHT11",
+        "Capteur ultrasonique HC-SR04",
+        "Connexion à plateformes cloud",
+        "Indication visuelle/sonore",
+        "Collecte données en temps réel",
+        "Alertes configurables"
+      ]
     },
     {
       id: 5,
-      title: "Partage & Collaboration",
-      description: "Fonctionnalités de partage et travail d'équipe",
-      icon: "👥",
-      features: ["Partage de dashboards", "Commentaires en temps réel", "Permissions granulaire", "Historique versions"]
+      title: "Surveillance avec Adafruit IO",
+      description: "Dashboard IoT pour monitoring température/humidité et contrôle à distance",
+      icon: "☁️",
+      features: [
+        "Intégration plateforme Adafruit IO",
+        "Visualisation données temps réel",
+        "Contrôle LED depuis dashboard",
+        "Graphiques et historiques",
+        "Alertes et notifications",
+        "Interface web responsive"
+      ]
     },
     {
       id: 6,
-      title: "Mobile First",
-      description: "Application optimisée pour mobile et tablette",
+      title: "Contrôle Bluetooth LED RGB",
+      description: "Commande de LED RGB via Bluetooth avec application mobile LightBlue",
       icon: "📱",
-      features: ["PWA installable", "Notifications push", "Mode hors ligne", "Performances optimisées"]
+      features: [
+        "Communication Bluetooth BLE",
+        "Application mobile LightBlue",
+        "Commandes personnalisées couleurs",
+        "Contrôle à distance sans fil",
+        "Configuration facile",
+        "Interface intuitive"
+      ]
     }
   ];
 
-  // PROJET 3 - Réseau Social
+  // PROJET 3 - FPGA Simulation (inchangé)
   const project3Blocks = [
     {
       id: 1,
-      title: "Chat en Temps Réel",
-      description: "Messagerie instantanée avec Socket.io",
-      icon: "💬",
-      features: ["Messages instantanés", "Notifications push", "Fichiers multimédias", "Groupes de discussion"]
+      title: "FSM LED",
+      description: "Machine à états finis contrôlant les modes d'une LED avec horloge et reset",
+      icon: "🔛",
+      features: [
+        "Machine à états finis (S0, S1, S2)",
+        "S0 : LED allumée constante",
+        "S1 : LED éteinte",
+        "S2 : LED clignotante",
+        "Transition sur front d'horloge",
+        "Reset asynchrone vers S0"
+      ]
     },
     {
       id: 2,
-      title: "Profils Utilisateurs",
-      description: "Profils personnalisables avec galerie photos",
-      icon: "👤",
-      features: ["Photos de profil", "Bannières personnalisées", "Biographies", "Statistiques activité"]
+      title: "Compteur 7 Segments",
+      description: "Compteur 4 bits affiché simultanément sur LEDs et afficheur 7 segments",
+      icon: "🔢",
+      features: [
+        "Compteur 4 bits (0-15)",
+        "Affichage LEDs et 7 segments",
+        "Bouton d'incrémentation",
+        "Bouton reset synchrone",
+        "Décodeur BCD vers 7 segments",
+        "Synchronisation d'horloge"
+      ]
     },
     {
       id: 3,
-      title: "Système d'Amis",
-      description: "Gestion des relations et invitations",
-      icon: "🤝",
-      features: ["Demandes d'amis", "Listes d'amis", "Suggestions", "Bloquage utilisateurs"]
+      title: "Mini Jeu",
+      description: "Mini-jeu interactif avec machine à états, score et affichage multiple",
+      icon: "🎮",
+      features: [
+        "Mode attente : LED clignotante",
+        "Mode jeu : incrémentation score",
+        "Reset score et état",
+        "Affichage score sur LEDs",
+        "Affichage score sur 7 segments",
+        "Logique de jeu complète"
+      ]
     },
     {
       id: 4,
-      title: "Fil d'Actualités",
-      description: "Algorithme de contenu personnalisé",
-      icon: "📰",
-      features: ["Posts multimédias", "Likes/commentaires", "Partages", "Hashtags trending"]
+      title: "Half Adder",
+      description: "Demi-additionneur VHDL calculant somme et retenue de deux bits",
+      icon: "➕",
+      features: [
+        "Porte XOR pour somme (S)",
+        "Porte AND pour retenue (C)",
+        "Entrées A et B (1 bit)",
+        "Sorties S et C (1 bit)",
+        "Table de vérité complète",
+        "Circuit combinatoire pur"
+      ]
     },
     {
       id: 5,
-      title: "Modération Contenu",
-      description: "Système de signalement et modération",
-      icon: "🛡️",
-      features: ["Signalement contenu", "Modération manuelle", "Filtres automatiques", "Journal d'activité"]
+      title: "Porte AND",
+      description: "Implémentation VHDL d'une porte logique ET avec deux entrées",
+      icon: "🔷",
+      features: [
+        "Porte logique ET (AND)",
+        "Sortie C = A AND B",
+        "Entrées A et B (1 bit)",
+        "Sortie C (1 bit)",
+        "Table de vérité : 1 si A=1 et B=1",
+        "Circuit combinatoire simple"
+      ]
     },
     {
       id: 6,
-      title: "Notifications Intelligentes",
-      description: "Système de notifications personnalisées",
-      icon: "🔔",
-      features: ["Notifications push", "Email digest", "Paramètres granulaire", "Modes ne pas déranger"]
+      title: "Porte OR",
+      description: "Implémentation VHDL d'une porte logique OU avec deux entrées",
+      icon: "🔶",
+      features: [
+        "Porte logique OU (OR)",
+        "Sortie C = A OR B",
+        "Entrées A et B (1 bit)",
+        "Sortie C (1 bit)",
+        "Table de vérité : 1 si A=1 ou B=1",
+        "Circuit combinatoire simple"
+      ]
     }
   ];
 
-  // PROJET 4 - Application Météo
+  // PROJET 4 - FreeRTOS ESP32 (inchangé)
   const project4Blocks = [
     {
       id: 1,
-      title: "Prévisions Localisées",
-      description: "Météo précise par géolocalisation",
-      icon: "📍",
-      features: ["Géolocalisation auto", "Prévisions 7 jours", "Heure par heure", "Alertes météo"]
+      title: "Mutex & Sémaphores",
+      description: "Gestion des priorités avec mutex et héritage de priorité pour éviter l'inversion",
+      icon: "⚖️",
+      features: [
+        "xSemaphoreTake pour contrôle mutex",
+        "Priority Inheritance automatique",
+        "Évite l'inversion de priorité",
+        "Synchronisation tâches critiques",
+        "Comportement temps réel garanti",
+        "Optimisation des performances"
+      ]
     },
     {
       id: 2,
-      title: "Interface Visuelle",
-      description: "Design intuitif avec animations météo",
-      icon: "🌈",
-      features: ["Animations temps réel", "Thèmes saisonniers", "Cartes interactives", "Graphiques météo"]
+      title: "ISR → Sémaphore → Tâche",
+      description: "Communication directe des interruptions vers tâches via sémaphores",
+      icon: "⚡",
+      features: [
+        "Déclenchement interruptions GPIO/timer",
+        "xSemaphoreGiveFromISR()",
+        "Réveil instantané des tâches",
+        "Mesure latence ISR→Tâche",
+        "Optimisation temps réel",
+        "Gestion priorité IRQ"
+      ]
     },
     {
       id: 3,
-      title: "PWA Avancée",
-      description: "Application Progressive Web App complète",
-      icon: "⚡",
-      features: ["Installation native", "Mode hors ligne", "Notifications push", "Performances optimisées"]
+      title: "Communication ISR → Tâches avec Queue",
+      description: "Système de communication avancé pour drivers UART/I2C/SPI via queues",
+      icon: "🔄",
+      features: [
+        "Drivers UART RX FIFO → ISR → Queue",
+        "Drivers I2C interruptions STOP/START/ACK",
+        "Drivers SPI DMA done interrupt",
+        "Capteurs industriels avec DRDY",
+        "Systèmes FreeRTOS professionnels",
+        "Architecture scalable et robuste"
+      ]
     },
     {
       id: 4,
-      title: "Widgets & Extensions",
-      description: "Widgets pour bureau et extensions navigateur",
-      icon: "🧩",
-      features: ["Widgets desktop", "Extension Chrome", "Widgets Android/iOS", "Personnalisation widgets"]
-    },
-    {
-      id: 5,
-      title: "Données Historiques",
-      description: "Accès aux données météo historiques",
-      icon: "📅",
-      features: ["Archives 10 ans", "Comparaisons", "Statistiques", "Tendances climatiques"]
-    },
-    {
-      id: 6,
-      title: "API Météo",
-      description: "Service API pour développeurs",
-      icon: "🔌",
-      features: ["API RESTful", "Documentation complète", "Clés API", "Limite requêtes configurable"]
+      title: "Driver UART RX Professionnel",
+      description: "Implémentation complète de driver UART RX avec FreeRTOS pour applications critiques",
+      icon: "📡",
+      features: [
+        "ISR UART RX FIFO avancé",
+        "Queue vers tâche de traitement",
+        "Détection overflow et erreurs",
+        "Analyse du jitter et latence",
+        "Optimisation priorité IRQ",
+        "Version professionnelle industrielle"
+      ]
     }
   ];
 
-  // PROJET 5 - Gestion de Projet
+  // PROJET 5 - Mini Racer (MODIFIÉ - 1 BLOC SEULEMENT)
   const project5Blocks = [
     {
       id: 1,
-      title: "Tableaux Kanban",
-      description: "Gestion visuelle des tâches avec drag & drop",
-      icon: "📋",
-      features: ["Colonnes personnalisables", "Cartes drag & drop", "Étiquettes couleurs", "Filtres avancés"]
-    },
-    {
-      id: 2,
-      title: "Gestion Tâches",
-      description: "Création et suivi des tâches détaillées",
-      icon: "✅",
-      features: ["Tâches sous-tâches", "Dates échéance", "Priorités", "Attribution membres"]
-    },
-    {
-      id: 3,
-      title: "Calendrier Projet",
-      description: "Vue calendrier pour planification",
-      icon: "📅",
-      features: ["Vue mensuelle/semaine", "Glisser-déposer dates", "Événements récurrents", "Synchronisation"]
-    },
-    {
-      id: 4,
-      title: "Chat d'Équipe",
-      description: "Communication intégrée pour l'équipe",
-      icon: "💬",
-      features: ["Canaux par projet", "Messages privés", "Fichiers partagés", "Intégration notifications"]
-    },
-    {
-      id: 5,
-      title: "Rapports & Analytics",
-      description: "Suivi des performances et productivité",
-      icon: "📊",
-      features: ["Graphiques avancés", "Rapports automatiques", "KPIs personnalisés", "Export données"]
-    },
-    {
-      id: 6,
-      title: "Intégrations",
-      description: "Connexion avec outils externes",
-      icon: "🔗",
-      features: ["GitHub/GitLab", "Slack/Discord", "Google Drive", "APIs personnalisées"]
+      title: "Création Complète du Jeu",
+      description: "Développement d'un jeu de course multijoueur de A à Z avec Unity et C#",
+      icon: "🏁",
+      features: [
+        "Architecture complète du jeu en C#/Unity",
+        "Physique avancée des véhicules avec drift réaliste",
+        "Système multijoueur pour 1 à 4 joueurs en réseau",
+        "Modélisation 3D des circuits et véhicules",
+        "Design des mécaniques de jeu et power-ups",
+        "UI/UX immersive et design sonore complet"
+      ]
     }
   ];
 
-  // PROJET 6 - Portfolio Artistique
+  // PROJET 6 - Portfolio Artistique (inchangé)
   const project6Blocks = [
     {
       id: 1,
@@ -304,44 +416,44 @@ const ProjectDetail = () => {
     }
   };
 
-  // Données principales des projets
+  // Données principales des projets - MISES À JOUR POUR PROJET 5
   const projectDetails = {
     1: {
-      title: "Application E-commerce",
-      description: "Plateforme complète de vente en ligne avec toutes les fonctionnalités modernes d'un e-commerce professionnel.",
-      technologies: ["React", "Redux", "Node.js", "MongoDB", "Stripe", "Express", "Material-UI", "JWT", "Socket.io"],
+      title: "Projet Arduino ESP32",
+      description: "Bienvenue dans ce projet excitant ! Dans ce projet, nous utiliserons la puce 74HC595 pour contrôler un affichage défilant de 8 LEDs. Imaginez déclencher ce projet et assister à un flux lumineux captivant, comme un arc-en-ciel scintillant sautant entre les 8 LEDs. Chaque LED s'allume une par une et s'éteint rapidement, tandis que la LED suivante continue de briller, créant un effet dynamique et magnifique.",
+      technologies: ["Arduino IDE", "C/C++", "ESP32", "74HC595", "LEDs", "PWM", "GPIO", "Capteurs", "Affichage"],
       github: "#",
       demo: "#",
       status: "🚀 En production"
     },
     2: {
-      title: "Tableau de Bord Analytics",
-      description: "Application de visualisation de données avancée avec tableaux de bord personnalisables et analytics en temps réel.",
-      technologies: ["React", "D3.js", "Chart.js", "Express", "Firebase", "WebSockets", "Machine Learning"],
+      title: "Projet IoT ESP32",
+      description: "CheerLights est un réseau mondial de lumières synchronisées qui peuvent être contrôlées par n'importe qui. Dans ce projet, nous utilisons également MQTT, mais au lieu de publier nos propres messages, nous nous abonnons au sujet « cheerlights ». Cela nous permet de recevoir les messages envoyés par d'autres au sujet « cheerlights » et d'utiliser ces informations pour changer la couleur de notre bande LED en conséquence.",
+      technologies: ["Arduino IDE", "C/C++", "ESP32", "MQTT", "WiFi", "Bluetooth", "LED RGB", "Cloud IoT", "Web Server"],
       github: "#",
       demo: "#",
       status: "🚀 En production"
     },
     3: {
-      title: "Réseau Social",
-      description: "Plateforme sociale complète avec chat en temps réel, gestion de profils et système de contenu intelligent.",
-      technologies: ["React", "Socket.io", "PostgreSQL", "AWS", "Redis", "Node.js", "Cloudinary"],
+      title: "Projet FPGA Simulation",
+      description: "Ce module VHDL implémente une machine à états finis (S0, S1, S2) contrôlant une LED. S0 : LED allumée, S1 : LED éteinte, S2 : LED clignote. La FSM avance à chaque front d'horloge, avec un reset qui revient à S0.",
+      technologies: ["VHDL", "Xilinx Vivado", "FPGA", "FSM", "7 Segments", "Portes Logiques", "Compteurs", "Circuits Numériques"],
       github: "#",
       demo: "#",
       status: "🚀 En production"
     },
     4: {
-      title: "Application Météo",
-      description: "Application météo moderne avec prévisions précises, interface visuelle et fonctionnalités PWA avancées.",
-      technologies: ["React", "PWA", "Service Workers", "Geolocation API", "Weather APIs", "IndexedDB"],
+      title: "Projet FreeRTOS ESP32",
+      description: "FreeRTOS applique automatiquement Priority Inheritance. Si TaskCom1 (prio 2) détient le mutex, et TaskCom2 (prio 3) attend, TaskCom1 hérite temporairement de prio 3. Elle libère le mutex plus vite, garantissant l'absence d'inversion de priorité → conformité temps réel stricte.",
+      technologies: ["FreeRTOS", "Arduino IDE", "C/C++", "ESP32", "Mutex", "Sémaphores", "Queues", "Priority Inheritance", "RTOS"],
       github: "#",
       demo: "#",
       status: "🚀 En production"
     },
     5: {
-      title: "Gestion de Projet",
-      description: "Outil complet de gestion de projet avec tableaux Kanban, calendrier intégré et collaboration d'équipe.",
-      technologies: ["React", "TypeScript", "GraphQL", "MongoDB", "WebSockets", "DnD Kit", "Chart.js"],
+      title: "Projet Mini Racer",
+      description: "Mini Racer est un jeu de course multijoueur développé de A à Z avec Unity en C#. Ce projet représente la création complète d'un jeu vidéo, depuis la conception initiale jusqu'au déploiement final. J'ai développé l'ensemble de l'architecture du jeu, implémenté la physique avancée des véhicules avec système de drift réaliste, créé le système multijoueur en réseau pour 1 à 4 joueurs, modélisé les circuits et véhicules en 3D, conçu les mécaniques de jeu et les power-ups, et développé l'interface utilisateur immersive avec design sonore complet. Ce projet démontre ma capacité à gérer un projet de jeu vidéo complet de manière autonome.",
+      technologies: ["Unity", "C#", "3D Modeling", "Game Physics", "Multiplayer", "UI/UX Design", "Audio Design", "Version Control", "Project Management"],
       github: "#",
       demo: "#",
       status: "🚀 En production"
@@ -398,17 +510,18 @@ const ProjectDetail = () => {
           </div>
         </div>
 
-        {/* Grille des 6 blocs (3 colonnes × 2 lignes) - CLIQUABLES */}
+        {/* Grille des blocs - ADAPTÉE POUR 1 BLOC */}
         <div className="project-blocks-section">
-          <h2 className="blocks-title">Fonctionnalités détaillées</h2>
-          <p className="blocks-subtitle">Cliquez sur une fonctionnalité pour voir les détails complets</p>
+          <h2 className="blocks-title">Développement du Jeu</h2>
+          <p className="blocks-subtitle">Découvrez le processus complet de création de ce jeu de course</p>
           
-          <div className="project-blocks-grid">
+          <div className="project-blocks-grid" style={{ gridTemplateColumns: '1fr' }}>
             {projectBlocks.map(block => (
               <Link 
                 to={`/project/${projectId}/block/${block.id}`}
                 className="project-block clickable-block"
                 key={block.id}
+                style={{ maxWidth: '800px', margin: '0 auto' }}
               >
                 <div className="block-header">
                   <div className="block-icon">{block.icon}</div>
@@ -423,7 +536,7 @@ const ProjectDetail = () => {
                   ))}
                 </ul>
                 <div className="block-click-hint">
-                  <span className="click-icon">🔍</span> Cliquer pour plus de détails
+                  <span className="click-icon">🔍</span> Cliquer pour voir les détails techniques complets
                 </div>
               </Link>
             ))}
@@ -434,7 +547,7 @@ const ProjectDetail = () => {
         <div className="project-conclusion">
           <h3 className="conclusion-title">Conclusion</h3>
           <p className="conclusion-text">
-            Ce projet démontre ma capacité à concevoir et développer des applications web complètes 
+            Ce projet démontre ma capacité à concevoir et développer {projectId <= 2 ? "des systèmes embarqués robustes" : projectId === 3 ? "des circuits numériques complexes" : projectId === 4 ? "des systèmes temps réel performants" : "des expériences interactives captivantes"} 
             avec une architecture robuste, une interface utilisateur moderne et des fonctionnalités avancées. 
             Chaque aspect a été soigneusement pensé pour offrir la meilleure expérience utilisateur possible.
           </p>

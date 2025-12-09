@@ -4,11 +4,11 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import './BlockDetail.css';
 
 // Import des composants de blocs spécifiques
-import EcommerceBlocks from './blocks/EcommerceBlocks';
-import AnalyticsBlocks from './blocks/AnalyticsBlocks';
-import SocialBlocks from './blocks/SocialBlocks';
-import WeatherBlocks from './blocks/WeatherBlocks';
-import ProjectManagementBlocks from './blocks/ProjectManagementBlocks';
+import EcommerceBlocks from './blocks/ArduinoBlocks';
+import AnalyticsBlocks from './blocks/IoTBlocks';
+import SocialBlocks from './blocks/FPGABlocks';
+import WeatherBlocks from './blocks/FreeRTOSBlocks';
+import ProjectManagementBlocks from './blocks/GameBlocks';
 import ArtisticPortfolioBlocks from './blocks/ArtisticPortfolioBlocks';
 
 const BlockDetail = () => {
