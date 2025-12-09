@@ -1,34 +1,53 @@
-// components/blocks/ArduinoBlocks.jsx - CORRIGÉ (tous les blocs séparés)
+// components/blocks/ArduinoBlocks.jsx - VERSION CORRIGÉE
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
+// Import des images depuis le dossier assets
+import degradeCouleursImg from '../../assets/degrade_couleurs.png';
+import microchip74HC595Img from '../../assets/microchip_74HC595.png';
+import detecterMouvementsImg from '../../assets/detecter_mouvements.png';
+import affichageCaracteresImg from '../../assets/affichage_caractères.png';
+import lumiereCouranteImg from '../../assets/lumière_courante.png';
+import moteurImg from '../../assets/moteur.png';
+
 const ArduinoBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
   const [imageError, setImageError] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
 
   const handleImageError = () => {
     setImageError(true);
+  };
+
+  const toggleVideo = () => {
+    setShowVideo(!showVideo);
+  };
+
+  // Tableau des images par bloc
+  const blockImages = {
+    1: degradeCouleursImg,
+    2: microchip74HC595Img,
+    3: detecterMouvementsImg,
+    4: affichageCaracteresImg,
+    5: lumiereCouranteImg,
+    6: moteurImg
   };
 
   const blocksData = {
     1: {
       title: "Contrôle LED RGB avec Dégradé de Couleurs",
       subtitle: "ESP32 + Potentiomètre + LED RGB",
-      description: "Système de contrôle LED RGB avec transitions fluides. Utilisation d'un potentiomètre pour ajuster la teinte en temps réel via conversion HSV vers RGB.",
+      description: "Système de contrôle LED RGB avec transitions fluides. Utilisation d'un potentiomètre pour ajuster la teinte en temps réel via conversion HSV vers RGB. Ce projet démontre comment créer des dégradés de couleurs fluides avec une LED RGB contrôlée par ESP32.",
       features: [
-        "LED RGB contrôlée par ESP32",
-        "Potentiomètre analogique pour réglage",
+        "LED RGB contrôlée par ESP32 via PWM",
+        "Potentiomètre analogique pour réglage teinte",
         "Algorithme HSV→RGB pour transitions fluides",
-        "Code modulaire en C++",
-        "Interface utilisateur simple",
-        "Documentation technique complète"
+        "Gradation progressive sans saccades",
+        "Code modulaire en C++ avec calibration",
+        "Interface utilisateur simple et intuitive"
       ],
       technologies: ["ESP32 DevKit", "LED RGB Common Anode", "Potentiomètre 10K", "Résistances 220Ω", "Breadboard", "Câbles jumper"],
-      image: {
-        src: "/assets/projects/arduino/led-rgb-project.jpg",
-        alt: "Circuit LED RGB ESP32 avec contrôle potentiomètre",
-        caption: "Circuit complet avec ESP32, LED RGB et potentiomètre"
-      },
-      videoLink: "#",
+      imageCaption: "Dégradé fluide de couleurs sur LED RGB contrôlée par ESP32 avec potentiomètre",
+      videoLink: "https://www.youtube.com/embed/example1", // Remplacez par vos liens vidéo
       codeSnippet: `// ESP32 - Contrôle LED RGB avec potentiomètre
 #include <Arduino.h>
 
@@ -86,7 +105,8 @@ void loop() {
         "Timer hardware pour PWM stable",
         "Lookup table pour conversion rapide",
         "Ajustement gamma pour correction visuelle"
-      ]
+      ],
+      imageExplanation: "Cette image montre le résultat du contrôle PWM avancé sur une LED RGB. L'ESP32 génère des signaux PWM sur 3 canaux (Rouge, Vert, Bleu) avec une résolution 8 bits (256 niveaux par couleur). Le potentiomètre ajuste la teinte (hue) dans l'espace colorimétrique HSV, qui est convertie en valeurs RGB pour créer ce dégradé continu."
     },
     2: {
       title: "Affichage Défilant 8 LEDs avec 74HC595",
@@ -101,12 +121,8 @@ void loop() {
         "Code réutilisable pour autres projets"
       ],
       technologies: ["74HC595", "LEDs 5mm", "Résistances 220Ω", "ESP32", "Oscilloscope", "Multimètre"],
-      image: {
-        src: "/assets/projects/arduino/74hc595-leds.jpg",
-        alt: "Circuit 8 LEDs contrôlées par 74HC595",
-        caption: "Montage avec registre à décalage 74HC595 et 8 LEDs"
-      },
-      videoLink: "#",
+      imageCaption: "Montage avec registre à décalage 74HC595 et 8 LEDs",
+      videoLink: "https://www.youtube.com/embed/example2",
       codeSnippet: `// ESP32 - Contrôle 8 LEDs avec 74HC595
 #include <Arduino.h>
 
@@ -163,7 +179,8 @@ void loop() {
         "Cascade de registres pour plus de LEDs",
         "Résistances de limitation adaptées",
         "Filtrage capacitif sur alimentation"
-      ]
+      ],
+      imageExplanation: "Le microchip 74HC595 est un registre à décalage 8 bits qui permet de contrôler 8 sorties avec seulement 3 signaux de contrôle. Cette image montre son intégration dans un circuit pour animer 8 LEDs avec des motifs complexes."
     },
     3: {
       title: "Détection Mouvement avec Capteur PIR",
@@ -178,12 +195,8 @@ void loop() {
         "Intégration système domotique"
       ],
       technologies: ["HC-SR501 PIR", "LED témoin", "Relais 5V", "ESP32", "Module WiFi", "Alimentation 5V"],
-      image: {
-        src: "/assets/projects/arduino/pir-sensor.jpg",
-        alt: "Capteur PIR HC-SR501 avec ESP32",
-        caption: "Système de détection mouvement avec LED d'alerte"
-      },
-      videoLink: "#",
+      imageCaption: "Système de détection mouvement avec LED d'alerte",
+      videoLink: "https://www.youtube.com/embed/example3",
       codeSnippet: `// ESP32 - Détecteur mouvement PIR
 #include <Arduino.h>
 
@@ -243,7 +256,8 @@ void loop() {
         "Séquence calibration optimisée",
         "Timer hardware pour délais précis",
         "Blindage et positionnement optimal"
-      ]
+      ],
+      imageExplanation: "Le capteur PIR (Passive Infrared) détecte les mouvements par les variations de rayonnement infrarouge. Cette installation montre comment intégrer le HC-SR501 avec un ESP32 pour créer un système de sécurité ou d'automatisation."
     },
     4: {
       title: "Affichage LCD I2C 16x2 avec Messages",
@@ -258,12 +272,8 @@ void loop() {
         "Gestion mémoire écran"
       ],
       technologies: ["LCD1602 I2C", "Module I2C PCF8574", "ESP32", "Potentiomètre", "Alimentation 5V"],
-      image: {
-        src: "/assets/projects/arduino/lcd-i2c.jpg",
-        alt: "Écran LCD I2C 16x2 avec ESP32",
-        caption: "Affichage de messages sur LCD avec interface I2C"
-      },
-      videoLink: "#",
+      imageCaption: "Affichage de messages sur LCD avec interface I2C",
+      videoLink: "https://www.youtube.com/embed/example4",
       codeSnippet: `// ESP32 - Contrôle LCD I2C 16x2
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
@@ -324,7 +334,8 @@ void loop() {
         "Pull-up resistors 4.7KΩ",
         "Table caractères personnalisée",
         "Contrôle PWM rétroéclairage"
-      ]
+      ],
+      imageExplanation: "L'écran LCD 16x2 avec interface I2C permet d'afficher du texte sur 2 lignes de 16 caractères. L'interface I2C réduit le nombre de connexions nécessaires de 6 à seulement 2 fils (SDA et SCL)."
     },
     5: {
       title: "Animation Lumière Courante WS2812",
@@ -339,12 +350,8 @@ void loop() {
         "Synchronisation précise µs"
       ],
       technologies: ["WS2812B LED Strip", "HC-SR04 Ultrason", "ESP32", "Alimentation 5V 3A", "Condensateur 1000µF"],
-      image: {
-        src: "/assets/projects/arduino/ws2812-animation.jpg",
-        alt: "Bande LED WS2812 avec animation",
-        caption: "Animation lumière courante sur bande LED 30 LEDs"
-      },
-      videoLink: "#",
+      imageCaption: "Animation lumière courante sur bande LED 30 LEDs",
+      videoLink: "https://www.youtube.com/embed/example5",
       codeSnippet: `// ESP32 - Animation WS2812 avec ultrason
 #include <Adafruit_NeoPixel.h>
 
@@ -418,7 +425,8 @@ void loop() {
         "Alimentation externe 5V 3A",
         "Condensateur de découplage",
         "Gestion PWM pour luminosité"
-      ]
+      ],
+      imageExplanation: "Les LEDs WS2812 sont adressables individuellement, permettant des animations complexes comme cette lumière courante. Chaque LED contient son propre contrôleur et peut être programmée indépendamment."
     },
     6: {
       title: "Contrôle Moteur DC avec L293D",
@@ -433,12 +441,8 @@ void loop() {
         "Applications robotiques"
       ],
       technologies: ["L293D Motor Driver", "Moteur DC 6-12V", "Diode 1N4007", "Condensateur 0.1µF", "ESP32", "Alimentation externe"],
-      image: {
-        src: "/assets/projects/arduino/l293d-motor.jpg",
-        alt: "Contrôle moteur avec L293D",
-        caption: "Driver L293D contrôlant un moteur DC 12V"
-      },
-      videoLink: "#",
+      imageCaption: "Driver L293D contrôlant un moteur DC 12V",
+      videoLink: "https://www.youtube.com/embed/example6",
       codeSnippet: `// ESP32 - Contrôle moteur L293D
 #include <Arduino.h>
 
@@ -515,11 +519,13 @@ void loop() {
         "Soft-start avec PWM progressif",
         "Filtres RC et blindage",
         "Feedback encodeur pour contrôle précis"
-      ]
+      ],
+      imageExplanation: "Le L293D est un driver moteur H-bridge qui permet de contrôler la direction et la vitesse d'un moteur DC. Il peut fournir jusqu'à 600mA par canal et supporte les tensions jusqu'à 36V."
     }
   };
 
   const blockData = blocksData[blockId] || blocksData[1];
+  const currentImage = blockImages[blockId];
 
   return (
     <>
@@ -549,7 +555,7 @@ void loop() {
             </div>
           </div>
 
-          {/* SECTION IMAGE UNIQUE */}
+          {/* SECTION IMAGE PRINCIPALE */}
           <div className="block-section">
             <h2 className="section-title">Visualisation du Projet</h2>
             <div className="single-image-container">
@@ -561,16 +567,28 @@ void loop() {
                   </div>
                 ) : (
                   <img 
-                    src={blockData.image.src} 
-                    alt={blockData.image.alt}
+                    src={currentImage} 
+                    alt={blockData.title}
                     className="main-project-image"
                     onError={handleImageError}
                   />
                 )}
                 <div className="main-image-caption">
-                  {blockData.image.caption}
+                  {blockData.imageCaption}
                 </div>
               </div>
+            </div>
+            
+            {/* Explication technique de l'image */}
+            <div className="image-explanation">
+              <h3>Explication technique :</h3>
+              <p>{blockData.imageExplanation}</p>
+              <ul>
+                <li><strong>Composants principaux :</strong> {blockData.technologies.slice(0, 3).join(', ')}</li>
+                <li><strong>Protocole de communication :</strong> Dépend du bloc (I2C, PWM, GPIO, etc.)</li>
+                <li><strong>Tension d'alimentation :</strong> 5V pour la plupart des composants</li>
+                <li><strong>Programmation :</strong> Arduino IDE avec bibliothèques spécifiques</li>
+              </ul>
             </div>
           </div>
 
@@ -583,34 +601,36 @@ void loop() {
             </div>
           </div>
 
+          {/* SECTION VIDÉO SIMPLIFIÉE - UNIQUEMENT POUR VIDÉO */}
           <div className="block-section">
-            <h2 className="section-title">Démonstration</h2>
-            <div className="media-container">
-              <div className="screenshot-preview">
-                <div className="screenshot-placeholder">
-                  {imageError ? (
-                    <div className="placeholder-content">
-                      <span className="placeholder-icon-large">🎥</span>
-                      <p>Aperçu du projet</p>
-                    </div>
-                  ) : (
-                    <img 
-                      src={blockData.image.src} 
-                      alt="Prévisualisation du projet"
-                      className="preview-image"
-                      onError={handleImageError}
-                    />
-                  )}
+            <h2 className="section-title">Démonstration Vidéo</h2>
+            <div className="simple-video-container">
+              {showVideo ? (
+                <div className="video-player">
+                  <iframe
+                    src={blockData.videoLink}
+                    title={`Démonstration ${blockData.title}`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="video-iframe"
+                  ></iframe>
+                  <button onClick={toggleVideo} className="close-video-btn">
+                    ✕ Fermer la vidéo
+                  </button>
                 </div>
-                <p className="screenshot-caption">{blockData.image.caption}</p>
-              </div>
-              
-              {blockData.videoLink !== "#" && (
-                <div className="video-container">
-                  <h3>Vidéo de démonstration</h3>
-                  <a href={blockData.videoLink} target="_blank" rel="noopener noreferrer" className="video-link">
-                    <span className="video-icon">▶️</span> Voir la vidéo
-                  </a>
+              ) : (
+                <div className="video-thumbnail-container" onClick={toggleVideo}>
+                  <div className="video-thumbnail-wrapper">
+                    <div className="video-placeholder">
+                      <span className="play-icon-large">▶</span>
+                      <p>Cliquer pour voir la vidéo</p>
+                    </div>
+                    <div className="video-play-overlay">
+                      <span className="play-icon">▶</span>
+                    </div>
+                  </div>
+                  <p className="video-instruction">Cliquez pour voir la démonstration en vidéo</p>
                 </div>
               )}
             </div>
