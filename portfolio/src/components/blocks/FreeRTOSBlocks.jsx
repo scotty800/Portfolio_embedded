@@ -1,35 +1,46 @@
-// components/blocks/FreeRTOSBlocks.jsx - NOUVEAU FICHIER pour projet FreeRTOS
+// components/blocks/FreeRTOSBlocks.jsx - PROJET 4 (FreeRTOS)
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const FreeRTOSBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
-  const [imageError, setImageError] = useState(false);
+// Import des images de démonstration SEULEMENT
+import mutexDemoImg from '../../assets/freertos/demo/mutex-demo.png';
+import isrSemaphoreDemoImg from '../../assets/freertos/demo/isr-semaphore-demo.png';
+import isrQueueDemoImg from '../../assets/freertos/demo/isr-queue-demo.png';
+import proUartDemoImg from '../../assets/freertos/demo/pro-uart-demo.png';
 
-  const handleImageError = () => {
-    setImageError(true);
+const FreeRTOSBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
+  const [demoImageError, setDemoImageError] = useState(false);
+
+  const handleDemoImageError = () => {
+    setDemoImageError(true);
   };
 
-  const blocksData = {
-    1: {
-      title: "Mutex et Héritage de Priorité FreeRTOS",
-      subtitle: "Éviter l'inversion de priorité avec mutex",
-      description: "Implémentation FreeRTOS de mutex avec héritage de priorité automatique pour prévenir l'inversion de priorité dans les systèmes temps réel critiques.",
-      features: [
-        "Création mutex avec xSemaphoreCreateMutex()",
-        "Héritage automatique de priorité",
-        "Évite l'inversion de priorité",
-        "Synchronisation tâches critiques",
-        "Temps de blocage contrôlé",
-        "Priorité dynamique ajustable"
-      ],
-      technologies: ["ESP32 DevKit", "FreeRTOS Kernel", "Semaphore", "Task Scheduler", "Priority Table", "Watchdog Timer"],
-      image: {
-        src: "/assets/projects/freertos/mutex-priority-inheritance.jpg",
-        alt: "Mutex FreeRTOS avec héritage de priorité",
-        caption: "Architecture mutex avec héritage de priorité sur ESP32"
-      },
-      videoLink: "#",
-      codeSnippet: `// FreeRTOS - Mutex avec héritage de priorité
+  // Tableau des images de démonstration par bloc
+  const demoImages = {
+    1: mutexDemoImg,
+    2: isrSemaphoreDemoImg,
+    3: isrQueueDemoImg,
+    4: proUartDemoImg
+  };
+
+  const getBlockData = (id) => {
+    const blocksData = {
+      1: {
+        title: "Mutex et Héritage de Priorité FreeRTOS",
+        subtitle: "Éviter l'inversion de priorité avec mutex",
+        description: "Implémentation FreeRTOS de mutex avec héritage de priorité automatique pour prévenir l'inversion de priorité dans les systèmes temps réel critiques.",
+        features: [
+          "Création mutex avec xSemaphoreCreateMutex()",
+          "Héritage automatique de priorité",
+          "Évite l'inversion de priorité",
+          "Synchronisation tâches critiques",
+          "Temps de blocage contrôlé",
+          "Priorité dynamique ajustable"
+        ],
+        technologies: ["ESP32 DevKit", "FreeRTOS Kernel", "Semaphore", "Task Scheduler", "Priority Table", "Watchdog Timer"],
+        detailedExplanation: "",
+        demoCaption: "Démonstration du système mutex avec héritage de priorité",
+        codeSnippet: `// FreeRTOS - Mutex avec héritage de priorité
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -162,39 +173,35 @@ void loop() {
   // Loop vide - FreeRTOS gère les tâches
   vTaskDelay(pdMS_TO_TICKS(1000));
 }`,
-      challenges: [
-        "Détection deadlocks mutex",
-        "Optimisation temps blocage",
-        "Gestion priorité dynamique",
-        "Debugging inversion priorité"
-      ],
-      solutions: [
-        "Timeout configurable sur mutex",
-        "Héritage priorité automatique",
-        "Monitoring tâches FreeRTOS",
-        "Trace FreeRTOS avec printf"
-      ]
-    },
-    2: {
-      title: "Communication ISR → Tâche via Sémaphore",
-      subtitle: "Interruptions GPIO vers tâches FreeRTOS",
-      description: "Système de communication directe des interruptions matérielles vers tâches FreeRTOS via sémaphores binaires et files d'attente.",
-      features: [
-        "Déclenchement interruptions GPIO",
-        "xSemaphoreGiveFromISR()",
-        "Réveil instantané tâches",
-        "Mesure latence ISR→Tâche",
-        "Gestion priorité IRQ",
-        "Buffer données ISR"
-      ],
-      technologies: ["ESP32 GPIO", "FreeRTOS Semaphore", "Interrupt Controller", "Timer Hardware", "Queue Handler", "Task Notify"],
-      image: {
-        src: "/assets/projects/freertos/isr-to-task-semaphore.jpg",
-        alt: "Communication ISR vers tâche via sémaphore",
-        caption: "Architecture interruption vers tâche FreeRTOS"
+        challenges: [
+          "Détection deadlocks mutex",
+          "Optimisation temps blocage",
+          "Gestion priorité dynamique",
+          "Debugging inversion priorité"
+        ],
+        solutions: [
+          "Timeout configurable sur mutex",
+          "Héritage priorité automatique",
+          "Monitoring tâches FreeRTOS",
+          "Trace FreeRTOS avec printf"
+        ]
       },
-      videoLink: "#",
-      codeSnippet: `// FreeRTOS - ISR vers Tâche via Sémaphore
+      2: {
+        title: "Communication ISR → Tâche via Sémaphore",
+        subtitle: "Interruptions GPIO vers tâches FreeRTOS",
+        description: "Système de communication directe des interruptions matérielles vers tâches FreeRTOS via sémaphores binaires et files d'attente.",
+        features: [
+          "Déclenchement interruptions GPIO",
+          "xSemaphoreGiveFromISR()",
+          "Réveil instantané tâches",
+          "Mesure latence ISR→Tâche",
+          "Gestion priorité IRQ",
+          "Buffer données ISR"
+        ],
+        technologies: ["ESP32 GPIO", "FreeRTOS Semaphore", "Interrupt Controller", "Timer Hardware", "Queue Handler", "Task Notify"],
+        detailedExplanation: "",
+        demoCaption: "Démonstration de la communication ISR vers tâche",
+        codeSnippet: `// FreeRTOS - ISR vers Tâche via Sémaphore
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -390,39 +397,35 @@ void loop() {
   
   vTaskDelay(pdMS_TO_TICKS(1000));
 }`,
-      challenges: [
-        "Latence ISR→Tâche minimale",
-        "Gestion queue pleine en ISR",
-        "Priorité ISR vs tâches",
-        "Buffer overflow données"
-      ],
-      solutions: [
-        "xSemaphoreGiveFromISR() optimisé",
-        "Queue overwrite si pleine",
-        "Configuration NVIC priorité",
-        "Buffer circulaire ring buffer"
-      ]
-    },
-    3: {
-      title: "Communication ISR → Tâches avec Queue",
-      subtitle: "Drivers UART/I2C/SPI avec files d'attente",
-      description: "Système de communication avancé pour drivers périphériques (UART, I2C, SPI) utilisant files d'attente FreeRTOS pour transfert de données.",
-      features: [
-        "Driver UART RX FIFO → ISR → Queue",
-        "Driver I2C interruptions STOP/START/ACK",
-        "Driver SPI DMA done interrupt",
-        "Capteurs industriels DRDY",
-        "Architecture scalable",
-        "Synchronisation multi-périphériques"
-      ],
-      technologies: ["ESP32 UART", "I2C Sensors", "SPI Devices", "DMA Controller", "FreeRTOS Queue", "Buffer Manager"],
-      image: {
-        src: "/assets/projects/freertos/isr-queue-communication.jpg",
-        alt: "Communication ISR vers tâches avec queue",
-        caption: "Architecture drivers avec files d'attente FreeRTOS"
+        challenges: [
+          "Latence ISR→Tâche minimale",
+          "Gestion queue pleine en ISR",
+          "Priorité ISR vs tâches",
+          "Buffer overflow données"
+        ],
+        solutions: [
+          "xSemaphoreGiveFromISR() optimisé",
+          "Queue overwrite si pleine",
+          "Configuration NVIC priorité",
+          "Buffer circulaire ring buffer"
+        ]
       },
-      videoLink: "#",
-      codeSnippet: `// FreeRTOS - Driver UART avec Queue
+      3: {
+        title: "Communication ISR → Tâches avec Queue",
+        subtitle: "Drivers UART/I2C/SPI avec files d'attente",
+        description: "Système de communication avancé pour drivers périphériques (UART, I2C, SPI) utilisant files d'attente FreeRTOS pour transfert de données.",
+        features: [
+          "Driver UART RX FIFO → ISR → Queue",
+          "Driver I2C interruptions STOP/START/ACK",
+          "Driver SPI DMA done interrupt",
+          "Capteurs industriels DRDY",
+          "Architecture scalable",
+          "Synchronisation multi-périphériques"
+        ],
+        technologies: ["ESP32 UART", "I2C Sensors", "SPI Devices", "DMA Controller", "FreeRTOS Queue", "Buffer Manager"],
+        detailedExplanation: "",
+        demoCaption: "Architecture drivers avec files d'attente FreeRTOS",
+        codeSnippet: `// FreeRTOS - Driver UART avec Queue
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -619,39 +622,35 @@ void loop() {
   
   vTaskDelay(pdMS_TO_TICKS(1000));
 }`,
-      challenges: [
-        "Gestion buffer UART overflow",
-        "Synchronisation multi-queues",
-        "Performance haute fréquence",
-        "Gestion erreurs hardware"
-      ],
-      solutions: [
-        "Watermark interrupts UART",
-        "Mutex pour accès partagé",
-        "DMA pour transfert bloc",
-        "Handlers erreurs ISR"
-      ]
-    },
-    4: {
-      title: "Driver UART RX Professionnel FreeRTOS",
-      subtitle: "Driver UART complet avec FIFO et gestion erreurs",
-      description: "Implémentation complète de driver UART RX professionnel avec FreeRTOS pour applications critiques. Gestion FIFO, erreurs et performances.",
-      features: [
-        "ISR UART RX FIFO avancé",
-        "Queue vers tâche de traitement",
-        "Détection overflow et erreurs",
-        "Analyse jitter et latence",
-        "Optimisation priorité IRQ",
-        "Version industrielle robuste"
-      ],
-      technologies: ["UART FIFO 128 bytes", "FreeRTOS Stream Buffer", "Error Detection", "Jitter Measurement", "Professional Debug", "Industrial Protocol"],
-      image: {
-        src: "/assets/projects/freertos/pro-uart-driver.jpg",
-        alt: "Driver UART professionnel FreeRTOS",
-        caption: "Architecture driver UART industriel avec FreeRTOS"
+        challenges: [
+          "Gestion buffer UART overflow",
+          "Synchronisation multi-queues",
+          "Performance haute fréquence",
+          "Gestion erreurs hardware"
+        ],
+        solutions: [
+          "Watermark interrupts UART",
+          "Mutex pour accès partagé",
+          "DMA pour transfert bloc",
+          "Handlers erreurs ISR"
+        ]
       },
-      videoLink: "#",
-      codeSnippet: `// FreeRTOS - Driver UART Professionnel
+      4: {
+        title: "Driver UART RX Professionnel FreeRTOS",
+        subtitle: "Driver UART complet avec FIFO et gestion erreurs",
+        description: "Implémentation complète de driver UART RX professionnel avec FreeRTOS pour applications critiques. Gestion FIFO, erreurs et performances.",
+        features: [
+          "ISR UART RX FIFO avancé",
+          "Queue vers tâche de traitement",
+          "Détection overflow et erreurs",
+          "Analyse jitter et latence",
+          "Optimisation priorité IRQ",
+          "Version industrielle robuste"
+        ],
+        technologies: ["UART FIFO 128 bytes", "FreeRTOS Stream Buffer", "Error Detection", "Jitter Measurement", "Professional Debug", "Industrial Protocol"],
+        detailedExplanation: "",
+        demoCaption: "Architecture driver UART industriel avec FreeRTOS",
+        codeSnippet: `// FreeRTOS - Driver UART Professionnel
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
@@ -951,22 +950,26 @@ void loop() {
   loop_counter++;
   vTaskDelay(pdMS_TO_TICKS(1000));
 }`,
-      challenges: [
-        "Optimisation mémoire ISR",
-        "Gestion priorité tâches critiques",
-        "Détection erreurs temps réel",
-        "Performance débit maximum"
-      ],
-      solutions: [
-        "Allocation mémoire statique ISR",
-        "Priorité tâches configurable",
-        "CRC et checksum hardware",
-        "Benchmark et profiling FreeRTOS"
-      ]
-    }
+        challenges: [
+          "Optimisation mémoire ISR",
+          "Gestion priorité tâches critiques",
+          "Détection erreurs temps réel",
+          "Performance débit maximum"
+        ],
+        solutions: [
+          "Allocation mémoire statique ISR",
+          "Priorité tâches configurable",
+          "CRC et checksum hardware",
+          "Benchmark et profiling FreeRTOS"
+        ]
+      }
+    };
+    
+    return blocksData[id] || blocksData[1];
   };
 
-  const blockData = blocksData[blockId] || blocksData[1];
+  const blockData = getBlockData(blockId);
+  const currentDemoImage = demoImages[blockId];
 
   return (
     <>
@@ -996,33 +999,32 @@ void loop() {
             </div>
           </div>
 
-          {/* SECTION IMAGE UNIQUE */}
+          {/* SECTION EXPLICATION DÉTAILLÉE (remplace Visualisation du Projet) */}
           <div className="block-section">
-            <h2 className="section-title">Visualisation du Projet</h2>
-            <div className="single-image-container">
-              <div className="main-image-wrapper">
-                {imageError ? (
-                  <div className="image-placeholder">
-                    <span className="placeholder-icon">📸</span>
-                    <p className="placeholder-text">Image non disponible</p>
-                  </div>
-                ) : (
-                  <img 
-                    src={blockData.image.src} 
-                    alt={blockData.image.alt}
-                    className="main-project-image"
-                    onError={handleImageError}
-                  />
-                )}
-                <div className="main-image-caption">
-                  {blockData.image.caption}
+            <h2 className="section-title">Explication Détaillée du Système</h2>
+            <div className="detailed-explanation">
+              {blockData.detailedExplanation ? (
+                <div dangerouslySetInnerHTML={{ __html: blockData.detailedExplanation }} />
+              ) : (
+                <div className="explanation-placeholder">
+                  <p className="placeholder-text">
+                    L'explication détaillée de ce système FreeRTOS sera ajoutée prochainement.
+                    Cette section contiendra une analyse approfondie de l'architecture, des 
+                    mécanismes de synchronisation, et des considérations de performance.
+                  </p>
+                  <ul className="placeholder-list">
+                    <li>Analyse de l'architecture FreeRTOS</li>
+                    <li>Détails des mécanismes de synchronisation</li>
+                    <li>Considérations de performance temps réel</li>
+                    <li>Optimisations spécifiques à l'ESP32</li>
+                  </ul>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
           <div className="block-section">
-            <h2 className="section-title">Composants utilisés</h2>
+            <h2 className="section-title">Technologies utilisées</h2>
             <div className="tech-tags">
               {blockData.technologies.map((tech, index) => (
                 <span key={index} className="tech-tag">{tech}</span>
@@ -1030,36 +1032,44 @@ void loop() {
             </div>
           </div>
 
+          {/* SECTION DÉMONSTRATION AVEC UNE IMAGE */}
           <div className="block-section">
             <h2 className="section-title">Démonstration</h2>
-            <div className="media-container">
-              <div className="screenshot-preview">
-                <div className="screenshot-placeholder">
-                  {imageError ? (
-                    <div className="placeholder-content">
-                      <span className="placeholder-icon-large">🎥</span>
-                      <p>Aperçu du projet FreeRTOS</p>
-                    </div>
-                  ) : (
-                    <img 
-                      src={blockData.image.src} 
-                      alt="Prévisualisation du projet"
-                      className="preview-image"
-                      onError={handleImageError}
-                    />
-                  )}
+            
+            <div className="video-description">
+              <p>Cette image illustre le fonctionnement du système FreeRTOS et son architecture.</p>
+            </div>
+            
+            <div className="single-image-container">
+              <div className="main-image-wrapper">
+                {demoImageError ? (
+                  <div className="image-placeholder">
+                    <span className="placeholder-icon">📊</span>
+                    <p className="placeholder-text">Image de démonstration non disponible</p>
+                  </div>
+                ) : (
+                  <img 
+                    src={currentDemoImage} 
+                    alt={`Démonstration ${blockData.title}`}
+                    className="main-project-image"
+                    onError={handleDemoImageError}
+                  />
+                )}
+                <div className="main-image-caption">
+                  {blockData.demoCaption}
                 </div>
-                <p className="screenshot-caption">{blockData.image.caption}</p>
               </div>
-              
-              {blockData.videoLink !== "#" && (
-                <div className="video-container">
-                  <h3>Vidéo de démonstration</h3>
-                  <a href={blockData.videoLink} target="_blank" rel="noopener noreferrer" className="video-link">
-                    <span className="video-icon">▶️</span> Voir la vidéo
-                  </a>
-                </div>
-              )}
+            </div>
+            
+            <div className="image-explanation">
+              <h3>Description de la démonstration :</h3>
+              <p>Cette image montre l'architecture du système FreeRTOS implémenté, incluant :</p>
+              <ul>
+                <li>L'organisation des tâches et leurs priorités</li>
+                <li>Les mécanismes de communication inter-tâches</li>
+                <li>La gestion des interruptions matérielles</li>
+                <li>Les files d'attente et sémaphores utilisés</li>
+              </ul>
             </div>
           </div>
 
