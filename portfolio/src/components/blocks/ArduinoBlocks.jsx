@@ -1,6 +1,6 @@
-// components/blocks/ArduinoBlocks.jsx - VERSION CORRIGÉE
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+// components/blocks/ArduinoBlocks.jsx - CORRIGÉ avec gestion vidéo
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useParams } from 'react-router-dom';
 
 // Import des images depuis le dossier assets
 import degradeCouleursImg from '../../assets/degrade_couleurs.png';
@@ -10,17 +10,44 @@ import affichageCaracteresImg from '../../assets/affichage_caractères.png';
 import lumiereCouranteImg from '../../assets/lumière_courante.png';
 import moteurImg from '../../assets/moteur.png';
 
+// Import des vidéos depuis le dossier assets/videos
+import degradeCouleursVideo from '../../assets/videos/degrade-couleurs.mp4';
+import microchip74HC595Video from '../../assets/videos/microchip-74hc595.mp4';
+import detectionMouvementVideo from '../../assets/videos/detection-mouvement.mp4';
+import affichageLCDVideo from '../../assets/videos/affichage-lcd.mp4';
+import lumiereCouranteVideo from '../../assets/videos/lumiere-courante.mp4';
+import controleMoteurVideo from '../../assets/videos/controle-moteur.mp4';
+
 const ArduinoBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
+  const { projectId: routeProjectId, blockId: routeBlockId } = useParams();
   const [imageError, setImageError] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
+  const [videoKey, setVideoKey] = useState(0); // Key pour forcer le re-render
+  const videoRef = useRef(null);
 
   const handleImageError = () => {
     setImageError(true);
   };
 
-  const toggleVideo = () => {
-    setShowVideo(!showVideo);
-  };
+  // Reset la vidéo quand le bloc change
+  useEffect(() => {
+    // Reset la key pour forcer le re-render de la vidéo
+    setVideoKey(prev => prev + 1);
+    
+    // Arrêter et reset la vidéo si elle existe
+    if (videoRef.current) {
+      videoRef.current.pause();
+      videoRef.current.currentTime = 0;
+      videoRef.current.load(); // Force le rechargement
+    }
+
+    // Cleanup function pour s'assurer que la vidéo est arrêtée
+    return () => {
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+    };
+  }, [blockId, projectId]); // Déclenché quand blockId ou projectId change
 
   // Tableau des images par bloc
   const blockImages = {
@@ -32,23 +59,35 @@ const ArduinoBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
     6: moteurImg
   };
 
-  const blocksData = {
-    1: {
-      title: "Contrôle LED RGB avec Dégradé de Couleurs",
-      subtitle: "ESP32 + Potentiomètre + LED RGB",
-      description: "Système de contrôle LED RGB avec transitions fluides. Utilisation d'un potentiomètre pour ajuster la teinte en temps réel via conversion HSV vers RGB. Ce projet démontre comment créer des dégradés de couleurs fluides avec une LED RGB contrôlée par ESP32.",
-      features: [
-        "LED RGB contrôlée par ESP32 via PWM",
-        "Potentiomètre analogique pour réglage teinte",
-        "Algorithme HSV→RGB pour transitions fluides",
-        "Gradation progressive sans saccades",
-        "Code modulaire en C++ avec calibration",
-        "Interface utilisateur simple et intuitive"
-      ],
-      technologies: ["ESP32 DevKit", "LED RGB Common Anode", "Potentiomètre 10K", "Résistances 220Ω", "Breadboard", "Câbles jumper"],
-      imageCaption: "Dégradé fluide de couleurs sur LED RGB contrôlée par ESP32 avec potentiomètre",
-      videoLink: "https://www.youtube.com/embed/example1", // Remplacez par vos liens vidéo
-      codeSnippet: `// ESP32 - Contrôle LED RGB avec potentiomètre
+  // Tableau des vidéos par bloc
+  const blockVideos = {
+    1: degradeCouleursVideo,
+    2: microchip74HC595Video,
+    3: detectionMouvementVideo,
+    4: affichageLCDVideo,
+    5: lumiereCouranteVideo,
+    6: controleMoteurVideo
+  };
+
+  // Fonction pour obtenir les infos du bloc
+  const getBlockData = (id) => {
+    const blocksData = {
+      1: {
+        title: "Contrôle LED RGB avec Dégradé de Couleurs",
+        subtitle: "ESP32 + Potentiomètre + LED RGB",
+        description: "Système de contrôle LED RGB avec transitions fluides. Utilisation d'un potentiomètre pour ajuster la teinte en temps réel via conversion HSV vers RGB. Ce projet démontre comment créer des dégradés de couleurs fluides avec une LED RGB contrôlée par ESP32.",
+        features: [
+          "LED RGB contrôlée par ESP32 via PWM",
+          "Potentiomètre analogique pour réglage teinte",
+          "Algorithme HSV→RGB pour transitions fluides",
+          "Gradation progressive sans saccades",
+          "Code modulaire en C++ avec calibration",
+          "Interface utilisateur simple et intuitive"
+        ],
+        technologies: ["ESP32 DevKit", "LED RGB Common Anode", "Potentiomètre 10K", "Résistances 220Ω", "Breadboard", "Câbles jumper"],
+        imageCaption: "Dégradé fluide de couleurs sur LED RGB contrôlée par ESP32 avec potentiomètre",
+        videoDescription: "Vidéo démontrant le contrôle en temps réel de la LED RGB avec transition fluide des couleurs via le potentiomètre.",
+        codeSnippet: `// ESP32 - Contrôle LED RGB avec potentiomètre
 #include <Arduino.h>
 
 const int potPin = 34; // GPIO34 pour potentiomètre
@@ -94,36 +133,36 @@ void loop() {
   
   delay(50);
 }`,
-      challenges: [
-        "Calibration précise du potentiomètre",
-        "Synchronisation PWM sur 3 canaux",
-        "Conversion HSV → RGB optimisée",
-        "Stabilité des couleurs sous différentes luminosités"
-      ],
-      solutions: [
-        "Mapping non-linéaire pour perception humaine",
-        "Timer hardware pour PWM stable",
-        "Lookup table pour conversion rapide",
-        "Ajustement gamma pour correction visuelle"
-      ],
-      imageExplanation: "Cette image montre le résultat du contrôle PWM avancé sur une LED RGB. L'ESP32 génère des signaux PWM sur 3 canaux (Rouge, Vert, Bleu) avec une résolution 8 bits (256 niveaux par couleur). Le potentiomètre ajuste la teinte (hue) dans l'espace colorimétrique HSV, qui est convertie en valeurs RGB pour créer ce dégradé continu."
-    },
-    2: {
-      title: "Affichage Défilant 8 LEDs avec 74HC595",
-      subtitle: "Registre à décalage pour contrôle multiple",
-      description: "Contrôle de 8 LEDs avec un seul registre à décalage 74HC595. Création d'effets d'animation avec consommation minimale de GPIO ESP32.",
-      features: [
-        "Contrôle 8 LEDs avec 3 pins ESP32",
-        "Effet défilant avec arc-en-ciel",
-        "Séquence d'allumage programmable",
-        "Optimisation mémoire avec registre",
-        "Timing précis des animations",
-        "Code réutilisable pour autres projets"
-      ],
-      technologies: ["74HC595", "LEDs 5mm", "Résistances 220Ω", "ESP32", "Oscilloscope", "Multimètre"],
-      imageCaption: "Montage avec registre à décalage 74HC595 et 8 LEDs",
-      videoLink: "https://www.youtube.com/embed/example2",
-      codeSnippet: `// ESP32 - Contrôle 8 LEDs avec 74HC595
+        challenges: [
+          "Calibration précise du potentiomètre",
+          "Synchronisation PWM sur 3 canaux",
+          "Conversion HSV → RGB optimisée",
+          "Stabilité des couleurs sous différentes luminosités"
+        ],
+        solutions: [
+          "Mapping non-linéaire pour perception humaine",
+          "Timer hardware pour PWM stable",
+          "Lookup table pour conversion rapide",
+          "Ajustement gamma pour correction visuelle"
+        ],
+        imageExplanation: "Cette image montre le résultat du contrôle PWM avancé sur une LED RGB. L'ESP32 génère des signaux PWM sur 3 canaux (Rouge, Vert, Bleu) avec une résolution 8 bits (256 niveaux par couleur). Le potentiomètre ajuste la teinte (hue) dans l'espace colorimétrique HSV, qui est convertie en valeurs RGB pour créer ce dégradé continu."
+      },
+      2: {
+        title: "Affichage Défilant 8 LEDs avec 74HC595",
+        subtitle: "Registre à décalage pour contrôle multiple",
+        description: "Contrôle de 8 LEDs avec un seul registre à décalage 74HC595. Création d'effets d'animation avec consommation minimale de GPIO ESP32.",
+        features: [
+          "Contrôle 8 LEDs avec 3 pins ESP32",
+          "Effet défilant avec arc-en-ciel",
+          "Séquence d'allumage programmable",
+          "Optimisation mémoire avec registre",
+          "Timing précis des animations",
+          "Code réutilisable pour autres projets"
+        ],
+        technologies: ["74HC595", "LEDs 5mm", "Résistances 220Ω", "ESP32", "Oscilloscope", "Multimètre"],
+        imageCaption: "Montage avec registre à décalage 74HC595 et 8 LEDs",
+        videoDescription: "Démonstration de l'animation défilante des 8 LEDs avec différents motifs programmés.",
+        codeSnippet: `// ESP32 - Contrôle 8 LEDs avec 74HC595
 #include <Arduino.h>
 
 // Pins 74HC595
@@ -168,36 +207,36 @@ void loop() {
     delay(100);
   }
 }`,
-      challenges: [
-        "Timing précis des signaux de shift",
-        "Synchronisation multiple registres",
-        "Consommation courant 8 LEDs",
-        "Interférences électromagnétiques"
-      ],
-      solutions: [
-        "Utilisation de timers hardware",
-        "Cascade de registres pour plus de LEDs",
-        "Résistances de limitation adaptées",
-        "Filtrage capacitif sur alimentation"
-      ],
-      imageExplanation: "Le microchip 74HC595 est un registre à décalage 8 bits qui permet de contrôler 8 sorties avec seulement 3 signaux de contrôle. Cette image montre son intégration dans un circuit pour animer 8 LEDs avec des motifs complexes."
-    },
-    3: {
-      title: "Détection Mouvement avec Capteur PIR",
-      subtitle: "ESP32 + HC-SR501 pour sécurité",
-      description: "Système de détection de mouvement infrarouge avec capteur PIR HC-SR501. Activation automatique de LEDs avec délai réglable.",
-      features: [
-        "Détection mouvement jusqu'à 7m",
-        "Réglage sensibilité et délai",
-        "Sortie numérique pour contrôle",
-        "Mode veille basse consommation",
-        "Indication visuelle LED",
-        "Intégration système domotique"
-      ],
-      technologies: ["HC-SR501 PIR", "LED témoin", "Relais 5V", "ESP32", "Module WiFi", "Alimentation 5V"],
-      imageCaption: "Système de détection mouvement avec LED d'alerte",
-      videoLink: "https://www.youtube.com/embed/example3",
-      codeSnippet: `// ESP32 - Détecteur mouvement PIR
+        challenges: [
+          "Timing précis des signaux de shift",
+          "Synchronisation multiple registres",
+          "Consommation courant 8 LEDs",
+          "Interférences électromagnétiques"
+        ],
+        solutions: [
+          "Utilisation de timers hardware",
+          "Cascade de registres pour plus de LEDs",
+          "Résistances de limitation adaptées",
+          "Filtrage capacitif sur alimentation"
+        ],
+        imageExplanation: "Le microchip 74HC595 est un registre à décalage 8 bits qui permet de contrôler 8 sorties avec seulement 3 signaux de contrôle. Cette image montre son intégration dans un circuit pour animer 8 LEDs avec des motifs complexes."
+      },
+      3: {
+        title: "Détection Mouvement avec Capteur PIR",
+        subtitle: "ESP32 + HC-SR501 pour sécurité",
+        description: "Système de détection de mouvement infrarouge avec capteur PIR HC-SR501. Activation automatique de LEDs avec délai réglable.",
+        features: [
+          "Détection mouvement jusqu'à 7m",
+          "Réglage sensibilité et délai",
+          "Sortie numérique pour contrôle",
+          "Mode veille basse consommation",
+          "Indication visuelle LED",
+          "Intégration système domotique"
+        ],
+        technologies: ["HC-SR501 PIR", "LED témoin", "Relais 5V", "ESP32", "Module WiFi", "Alimentation 5V"],
+        imageCaption: "Système de détection mouvement avec LED d'alerte",
+        videoDescription: "Détection de mouvement en temps réel avec activation automatique de la LED et du relais.",
+        codeSnippet: `// ESP32 - Détecteur mouvement PIR
 #include <Arduino.h>
 
 const int pirPin = 4;     // GPIO4 pour capteur PIR
@@ -245,36 +284,36 @@ void loop() {
   
   delay(100);
 }`,
-      challenges: [
-        "Faux positifs avec animaux/chaleur",
-        "Calibration longue du capteur",
-        "Gestion délais d'extinction",
-        "Interférences environnantes"
-      ],
-      solutions: [
-        "Filtrage logiciel des signaux",
-        "Séquence calibration optimisée",
-        "Timer hardware pour délais précis",
-        "Blindage et positionnement optimal"
-      ],
-      imageExplanation: "Le capteur PIR (Passive Infrared) détecte les mouvements par les variations de rayonnement infrarouge. Cette installation montre comment intégrer le HC-SR501 avec un ESP32 pour créer un système de sécurité ou d'automatisation."
-    },
-    4: {
-      title: "Affichage LCD I2C 16x2 avec Messages",
-      subtitle: "Interface utilisateur avec écran LCD",
-      description: "Affichage de messages dynamiques sur écran LCD 1602 avec interface I2C. Compteur incrémental et messages de bienvenue personnalisés.",
-      features: [
-        "Module I2C LCD1602 (16x2 caractères)",
-        "Messages défilants personnalisés",
-        "Compteur automatique incrémental",
-        "Interface I2C simplifiée (2 fils)",
-        "Rétroéclairage ajustable",
-        "Gestion mémoire écran"
-      ],
-      technologies: ["LCD1602 I2C", "Module I2C PCF8574", "ESP32", "Potentiomètre", "Alimentation 5V"],
-      imageCaption: "Affichage de messages sur LCD avec interface I2C",
-      videoLink: "https://www.youtube.com/embed/example4",
-      codeSnippet: `// ESP32 - Contrôle LCD I2C 16x2
+        challenges: [
+          "Faux positifs avec animaux/chaleur",
+          "Calibration longue du capteur",
+          "Gestion délais d'extinction",
+          "Interférences environnantes"
+        ],
+        solutions: [
+          "Filtrage logiciel des signaux",
+          "Séquence calibration optimisée",
+          "Timer hardware pour délais précis",
+          "Blindage et positionnement optimal"
+        ],
+        imageExplanation: "Le capteur PIR (Passive Infrared) détecte les mouvements par les variations de rayonnement infrarouge. Cette installation montre comment intégrer le HC-SR501 avec un ESP32 pour créer un système de sécurité ou d'automatisation."
+      },
+      4: {
+        title: "Affichage LCD I2C 16x2 avec Messages",
+        subtitle: "Interface utilisateur avec écran LCD",
+        description: "Affichage de messages dynamiques sur écran LCD 1602 avec interface I2C. Compteur incrémental et messages de bienvenue personnalisés.",
+        features: [
+          "Module I2C LCD1602 (16x2 caractères)",
+          "Messages défilants personnalisés",
+          "Compteur automatique incrémental",
+          "Interface I2C simplifiée (2 fils)",
+          "Rétroéclairage ajustable",
+          "Gestion mémoire écran"
+        ],
+        technologies: ["LCD1602 I2C", "Module I2C PCF8574", "ESP32", "Potentiomètre", "Alimentation 5V"],
+        imageCaption: "Affichage de messages sur LCD avec interface I2C",
+        videoDescription: "Affichage en direct du compteur et du message défilant sur l'écran LCD.",
+        codeSnippet: `// ESP32 - Contrôle LCD I2C 16x2
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 
@@ -323,36 +362,36 @@ void loop() {
   
   delay(500);
 }`,
-      challenges: [
-        "Adresse I2C non détectée",
-        "Communication I2C instable",
-        "Gestion caractères spéciaux",
-        "Rétroéclairage consommation"
-      ],
-      solutions: [
-        "Scanner automatique d'adresses",
-        "Pull-up resistors 4.7KΩ",
-        "Table caractères personnalisée",
-        "Contrôle PWM rétroéclairage"
-      ],
-      imageExplanation: "L'écran LCD 16x2 avec interface I2C permet d'afficher du texte sur 2 lignes de 16 caractères. L'interface I2C réduit le nombre de connexions nécessaires de 6 à seulement 2 fils (SDA et SCL)."
-    },
-    5: {
-      title: "Animation Lumière Courante WS2812",
-      subtitle: "Bande LED adressable avec détection",
-      description: "Animation lumière courante sur bande LED WS2812 avec détection d'obstacles et changement direction automatique. Contrôle individuel de chaque LED.",
-      features: [
-        "Bande LED WS2812 (30 LEDs/m)",
-        "Animation lumière courante fluide",
-        "Détection obstacles ultrasonique",
-        "Changement direction automatique",
-        "Couleurs personnalisables RGB",
-        "Synchronisation précise µs"
-      ],
-      technologies: ["WS2812B LED Strip", "HC-SR04 Ultrason", "ESP32", "Alimentation 5V 3A", "Condensateur 1000µF"],
-      imageCaption: "Animation lumière courante sur bande LED 30 LEDs",
-      videoLink: "https://www.youtube.com/embed/example5",
-      codeSnippet: `// ESP32 - Animation WS2812 avec ultrason
+        challenges: [
+          "Adresse I2C non détectée",
+          "Communication I2C instable",
+          "Gestion caractères spéciaux",
+          "Rétroéclairage consommation"
+        ],
+        solutions: [
+          "Scanner automatique d'adresses",
+          "Pull-up resistors 4.7KΩ",
+          "Table caractères personnalisée",
+          "Contrôle PWM rétroéclairage"
+        ],
+        imageExplanation: "L'écran LCD 16x2 avec interface I2C permet d'afficher du texte sur 2 lignes de 16 caractères. L'interface I2C réduit le nombre de connexions nécessaires de 6 à seulement 2 fils (SDA et SCL)."
+      },
+      5: {
+        title: "Animation Lumière Courante WS2812",
+        subtitle: "Bande LED adressable avec détection",
+        description: "Animation lumière courante sur bande LED WS2812 avec détection d'obstacles et changement direction automatique. Contrôle individuel de chaque LED.",
+        features: [
+          "Bande LED WS2812 (30 LEDs/m)",
+          "Animation lumière courante fluide",
+          "Détection obstacles ultrasonique",
+          "Changement direction automatique",
+          "Couleurs personnalisables RGB",
+          "Synchronisation précise µs"
+        ],
+        technologies: ["WS2812B LED Strip", "HC-SR04 Ultrason", "ESP32", "Alimentation 5V 3A", "Condensateur 1000µF"],
+        imageCaption: "Animation lumière courante sur bande LED 30 LEDs",
+        videoDescription: "Démonstration de l'animation lumière courante avec changement de direction automatique lors de la détection d'obstacle.",
+        codeSnippet: `// ESP32 - Animation WS2812 avec ultrason
 #include <Adafruit_NeoPixel.h>
 
 #define LED_PIN 15
@@ -414,36 +453,36 @@ void loop() {
   strip.show();
   delay(animationSpeed);
 }`,
-      challenges: [
-        "Timing précis WS2812 (800kHz)",
-        "Alimentation stable pour 30 LEDs",
-        "Interférences signal données",
-        "Consommation courant élevée"
-      ],
-      solutions: [
-        "Néopixel library optimisée ESP32",
-        "Alimentation externe 5V 3A",
-        "Condensateur de découplage",
-        "Gestion PWM pour luminosité"
-      ],
-      imageExplanation: "Les LEDs WS2812 sont adressables individuellement, permettant des animations complexes comme cette lumière courante. Chaque LED contient son propre contrôleur et peut être programmée indépendamment."
-    },
-    6: {
-      title: "Contrôle Moteur DC avec L293D",
-      subtitle: "Pilotage bidirectionnel avec PWM",
-      description: "Contrôle de moteur DC avec driver L293D pour vitesse variable et changement direction. Protection contre surcharge et contrôle précis.",
-      features: [
-        "Circuit intégré L293D (600mA/channel)",
-        "Contrôle bidirectionnel moteur",
-        "Signal PWM pour vitesse variable",
-        "Protection diodes flyback",
-        "Interface ESP32 simple",
-        "Applications robotiques"
-      ],
-      technologies: ["L293D Motor Driver", "Moteur DC 6-12V", "Diode 1N4007", "Condensateur 0.1µF", "ESP32", "Alimentation externe"],
-      imageCaption: "Driver L293D contrôlant un moteur DC 12V",
-      videoLink: "https://www.youtube.com/embed/example6",
-      codeSnippet: `// ESP32 - Contrôle moteur L293D
+        challenges: [
+          "Timing précis WS2812 (800kHz)",
+          "Alimentation stable pour 30 LEDs",
+          "Interférences signal données",
+          "Consommation courant élevée"
+        ],
+        solutions: [
+          "Néopixel library optimisée ESP32",
+          "Alimentation externe 5V 3A",
+          "Condensateur de découplage",
+          "Gestion PWM pour luminosité"
+        ],
+        imageExplanation: "Les LEDs WS2812 sont adressables individuellement, permettant des animations complexes comme cette lumière courante. Chaque LED contient son propre contrôleur et peut être programmée indépendamment."
+      },
+      6: {
+        title: "Contrôle Moteur DC avec L293D",
+        subtitle: "Pilotage bidirectionnel avec PWM",
+        description: "Contrôle de moteur DC avec driver L293D pour vitesse variable et changement direction. Protection contre surcharge et contrôle précis.",
+        features: [
+          "Circuit intégré L293D (600mA/channel)",
+          "Contrôle bidirectionnel moteur",
+          "Signal PWM pour vitesse variable",
+          "Protection diodes flyback",
+          "Interface ESP32 simple",
+          "Applications robotiques"
+        ],
+        technologies: ["L293D Motor Driver", "Moteur DC 6-12V", "Diode 1N4007", "Condensateur 0.1µF", "ESP32", "Alimentation externe"],
+        imageCaption: "Driver L293D contrôlant un moteur DC 12V",
+        videoDescription: "Démonstration du contrôle de vitesse et de direction du moteur avec le potentiomètre.",
+        codeSnippet: `// ESP32 - Contrôle moteur L293D
 #include <Arduino.h>
 
 // Pins L293D
@@ -508,24 +547,28 @@ void loop() {
   
   delay(100);
 }`,
-      challenges: [
-        "Chauffage L293D à haute charge",
-        "Courant d'appel moteur démarrage",
-        "Interférences EMI moteur",
-        "Précision contrôle vitesse"
-      ],
-      solutions: [
-        "Radiateur thermique ou ventilateur",
-        "Soft-start avec PWM progressif",
-        "Filtres RC et blindage",
-        "Feedback encodeur pour contrôle précis"
-      ],
-      imageExplanation: "Le L293D est un driver moteur H-bridge qui permet de contrôler la direction et la vitesse d'un moteur DC. Il peut fournir jusqu'à 600mA par canal et supporte les tensions jusqu'à 36V."
-    }
+        challenges: [
+          "Chauffage L293D à haute charge",
+          "Courant d'appel moteur démarrage",
+          "Interférences EMI moteur",
+          "Précision contrôle vitesse"
+        ],
+        solutions: [
+          "Radiateur thermique ou ventilateur",
+          "Soft-start avec PWM progressif",
+          "Filtres RC et blindage",
+          "Feedback encodeur pour contrôle précis"
+        ],
+        imageExplanation: "Le L293D est un driver moteur H-bridge qui permet de contrôler la direction et la vitesse d'un moteur DC. Il peut fournir jusqu'à 600mA par canal et supporte les tensions jusqu'à 36V."
+      }
+    };
+    
+    return blocksData[id] || blocksData[1];
   };
 
-  const blockData = blocksData[blockId] || blocksData[1];
+  const blockData = getBlockData(blockId);
   const currentImage = blockImages[blockId];
+  const currentVideo = blockVideos[blockId];
 
   return (
     <>
@@ -601,40 +644,30 @@ void loop() {
             </div>
           </div>
 
-          {/* SECTION VIDÉO SIMPLIFIÉE - UNIQUEMENT POUR VIDÉO */}
-          <div className="block-section">
-            <h2 className="section-title">Démonstration Vidéo</h2>
-            <div className="simple-video-container">
-              {showVideo ? (
-                <div className="video-player">
-                  <iframe
-                    src={blockData.videoLink}
-                    title={`Démonstration ${blockData.title}`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="video-iframe"
-                  ></iframe>
-                  <button onClick={toggleVideo} className="close-video-btn">
-                    ✕ Fermer la vidéo
-                  </button>
-                </div>
-              ) : (
-                <div className="video-thumbnail-container" onClick={toggleVideo}>
-                  <div className="video-thumbnail-wrapper">
-                    <div className="video-placeholder">
-                      <span className="play-icon-large">▶</span>
-                      <p>Cliquer pour voir la vidéo</p>
-                    </div>
-                    <div className="video-play-overlay">
-                      <span className="play-icon">▶</span>
-                    </div>
-                  </div>
-                  <p className="video-instruction">Cliquez pour voir la démonstration en vidéo</p>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* SECTION VIDÉO AVEC CONTAINER FIXE */}
+<div className="block-section">
+  <h2 className="section-title">Démonstration Vidéo</h2>
+  
+  <div className="video-description">
+    <p>{blockData.videoDescription}</p>
+  </div>
+  
+  <div className="video-container-fixed">
+    <div className="video-wrapper">
+      <video
+        key={`video-${projectId}-${blockId}-${videoKey}`}
+        ref={videoRef}
+        className="responsive-video"
+        controls
+        poster={currentImage}
+        preload="metadata"
+      >
+        <source src={currentVideo} type="video/mp4" />
+        Votre navigateur ne supporte pas la lecture de vidéos.
+      </video>
+    </div>
+  </div>
+</div>
 
           <div className="block-section">
             <h2 className="section-title">Extrait de code</h2>
