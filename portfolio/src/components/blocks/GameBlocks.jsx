@@ -1,14 +1,23 @@
-// components/blocks/GameBlocks.jsx - SECTION VIDÉO SIMPLIFIÉE
+// components/blocks/GameBlocks.jsx - VERSION SANS TEXTE SOUS LES IMAGES
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
-  const [imageError, setImageError] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
+// Import des images optimisées
+import mainImage from '../../assets/projects/game/mini-racer-main-optimized.jpg';
+import gameplay1Img from '../../assets/projects/game/gameplay-1-optimized.jpg';
+import vehicleDesignImg from '../../assets/projects/game/vehicle-design-optimized.jpg';
+import trackDesignImg from '../../assets/projects/game/track-design-optimized.jpg';
+import multiplayerLobbyImg from '../../assets/projects/game/multiplayer-lobby-optimized.jpg';
+import uiDesignImg from '../../assets/projects/game/ui-design-optimized.jpg';
+import physicsSimulationImg from '../../assets/projects/game/physics-simulation-optimized.jpg';
+import audioDesignImg from '../../assets/projects/game/audio-design-optimized.jpg';
+import optimizationToolsImg from '../../assets/projects/game/optimization-tools-optimized.jpg';
 
-  const handleImageError = () => {
-    setImageError(true);
-  };
+// Import de la vidéo
+import gameDemoVideo from '../../assets/videos/game/mini-racer-demo-optimized.mp4';
+
+const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
+  const [showVideo, setShowVideo] = useState(false);
 
   const toggleVideo = () => {
     setShowVideo(!showVideo);
@@ -31,21 +40,20 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
       ],
       technologies: ["Unity Engine 2021", "C# Scripting", "Blender 3D", "Photon PUN", "ProBuilder", "Visual Studio", "Git Version Control", "FMOD Audio"],
       mainImage: {
-        src: "/assets/projects/game/mini-racer-main.jpg",
-        alt: "Mini Racer - Jeu de course multijoueur Unity",
-        caption: "Écran titre du jeu Mini Racer avec sélection de véhicules"
+        src: mainImage,
+        alt: "Mini Racer - Jeu de course multijoueur Unity"
       },
       additionalImages: [
-        { src: "/assets/projects/game/gameplay-1.jpg", alt: "Gameplay course avec effets visuels" },
-        { src: "/assets/projects/game/vehicle-design.jpg", alt: "Design 3D des véhicules" },
-        { src: "/assets/projects/game/track-design.jpg", alt: "Modélisation des circuits" },
-        { src: "/assets/projects/game/multiplayer-lobby.jpg", alt: "Interface multijoueur" },
-        { src: "/assets/projects/game/ui-design.jpg", alt: "Design interface utilisateur" },
-        { src: "/assets/projects/game/physics-simulation.jpg", alt: "Simulation physique véhicules" },
-        { src: "/assets/projects/game/audio-design.jpg", alt: "Design sonore et musique" },
-        { src: "/assets/projects/game/optimization-tools.jpg", alt: "Outils d'optimisation" }
+        { src: gameplay1Img, alt: "Gameplay course avec effets visuels" },
+        { src: vehicleDesignImg, alt: "Design 3D des véhicules" },
+        { src: trackDesignImg, alt: "Modélisation des circuits" },
+        { src: multiplayerLobbyImg, alt: "Interface multijoueur" },
+        { src: uiDesignImg, alt: "Design interface utilisateur" },
+        { src: physicsSimulationImg, alt: "Simulation physique véhicules" },
+        { src: audioDesignImg, alt: "Design sonore et musique" },
+        { src: optimizationToolsImg, alt: "Outils d'optimisation" }
       ],
-      videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ", // Lien exemple
+      videoLink: gameDemoVideo,
       challenges: [
         "Synchronisation parfaite multijoueur en réseau",
         "Physique réaliste des véhicules et drift",
@@ -95,66 +103,35 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
             </div>
           </div>
 
-          {/* SECTION IMAGE PRINCIPALE */}
+          {/* SECTION IMAGE PRINCIPALE - SANS CAPTION */}
           <div className="block-section">
             <h2 className="section-title">Aperçu du Jeu</h2>
             <div className="single-image-container">
               <div className="main-image-wrapper">
-                {imageError ? (
-                  <div className="image-placeholder">
-                    <span className="placeholder-icon">🎮</span>
-                    <p className="placeholder-text">Image non disponible</p>
-                  </div>
-                ) : (
-                  <img 
-                    src={blockData.mainImage.src} 
-                    alt={blockData.mainImage.alt}
-                    className="main-project-image"
-                    onError={handleImageError}
-                  />
-                )}
-                <div className="main-image-caption">
-                  {blockData.mainImage.caption}
-                </div>
+                <img 
+                  src={blockData.mainImage.src} 
+                  alt={blockData.mainImage.alt}
+                  className="main-project-image"
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>
 
-          {/* SECTION 8 IMAGES ADDITIONNELLES */}
+          {/* SECTION 8 IMAGES ADDITIONNELLES - SANS TEXTES */}
           <div className="block-section">
             <h2 className="section-title">Galerie du Développement</h2>
-            <p className="section-subtitle">Découvrez les différentes étapes de création du jeu</p>
             
             <div className="game-images-grid">
               {blockData.additionalImages.map((img, index) => (
                 <div key={index} className="game-image-item">
                   <div className="game-image-wrapper">
-                    {imageError ? (
-                      <div className="placeholder-content">
-                        <span className="placeholder-icon">🖼️</span>
-                        <p>Aspect {index + 1}</p>
-                      </div>
-                    ) : (
-                      <img 
-                        src={img.src} 
-                        alt={img.alt}
-                        className="game-additional-image"
-                        onError={handleImageError}
-                      />
-                    )}
-                  </div>
-                  <div className="game-image-info">
-                    <h4 className="game-image-title">
-                      {index === 0 && "Gameplay Dynamique"}
-                      {index === 1 && "Design Véhicules"}
-                      {index === 2 && "Création Circuits"}
-                      {index === 3 && "Multijoueur"}
-                      {index === 4 && "Interface UI/UX"}
-                      {index === 5 && "Physique Avancée"}
-                      {index === 6 && "Audio Immersif"}
-                      {index === 7 && "Optimisation"}
-                    </h4>
-                    <p className="game-image-caption">{img.alt}</p>
+                    <img 
+                      src={img.src} 
+                      alt={img.alt}
+                      className="game-additional-image"
+                      loading="lazy"
+                    />
                   </div>
                 </div>
               ))}
@@ -170,20 +147,21 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
             </div>
           </div>
 
-          {/* SECTION VIDÉO SIMPLIFIÉE */}
-          <div className="block-section">
+          {/* SECTION VIDÉO */}
+          <div className="block-section video-section">
             <h2 className="section-title">Démonstration Vidéo</h2>
             <div className="simple-video-container">
               {showVideo ? (
-                <div className="video-player">
-                  <iframe
+                <div className="video-player-full">
+                  <video
                     src={blockData.videoLink}
                     title="Mini Racer Gameplay Demo"
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="video-iframe"
-                  ></iframe>
+                    controls
+                    autoPlay
+                    className="fullscreen-video"
+                  >
+                    Votre navigateur ne supporte pas la lecture de vidéos.
+                  </video>
                   <button onClick={toggleVideo} className="close-video-btn">
                     ✕ Fermer la vidéo
                   </button>
@@ -191,19 +169,12 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
               ) : (
                 <div className="video-thumbnail-container" onClick={toggleVideo}>
                   <div className="video-thumbnail-wrapper">
-                    {imageError ? (
-                      <div className="video-placeholder">
-                        <span className="play-icon-large">▶</span>
-                        <p>Cliquer pour voir la vidéo</p>
-                      </div>
-                    ) : (
-                      <img 
-                        src={blockData.mainImage.src} 
-                        alt="Miniature vidéo"
-                        className="video-thumbnail-image"
-                        onError={handleImageError}
-                      />
-                    )}
+                    <img 
+                      src={blockData.mainImage.src} 
+                      alt="Miniature vidéo"
+                      className="video-thumbnail-image"
+                      loading="lazy"
+                    />
                     <div className="video-play-overlay">
                       <span className="play-icon">▶</span>
                     </div>
