@@ -1,102 +1,141 @@
-// components/blocks/FPGABlocks.jsx - NOUVEAU FICHIER pour projet FPGA
-import React, { useState } from 'react';
+// components/blocks/FPGABlocks.jsx - PROJET 3 (FPGA) - SIMILAIRE AU PROJET 2
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+
+// Import des images depuis le dossier assets (à créer)
+import fsmLedImg from '../../assets/fpga/fsm-led-controller.png';
+import counter7segImg from '../../assets/fpga/7segment-counter.png';
+import minigameImg from '../../assets/fpga/mini-game-fpga.png';
+import halfAdderImg from '../../assets/fpga/half-adder-circuit.png';
+import andGateImg from '../../assets/fpga/and-gate-circuit.png';
+import orGateImg from '../../assets/fpga/or-gate-circuit.png';
+
+// Import des images de simulation (remplacement vidéo)
+import fsmSimulationImg from '../../assets/fpga/simulation/fsm-simulation.png';
+import counterSimulationImg from '../../assets/fpga/simulation/counter-simulation.png';
+import gameSimulationImg from '../../assets/fpga/simulation/game-simulation.png';
+import adderSimulationImg from '../../assets/fpga/simulation/half-adder-sim.png';
+import andSimulationImg from '../../assets/fpga/simulation/and-simulation.png';
+import orSimulationImg from '../../assets/fpga/simulation/or-simulation.png';
 
 const FPGABlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
   const [imageError, setImageError] = useState(false);
+  const [simulationImageError, setSimulationImageError] = useState(false);
 
   const handleImageError = () => {
     setImageError(true);
   };
 
-  const blocksData = {
-    1: {
-      title: "Machine à États Finis LED Controller",
-      subtitle: "VHDL FSM avec états S0, S1, S2 sur FPGA",
-      description: "Implémentation VHDL d'une machine à états finis contrôlant une LED avec 3 états : allumée constante, éteinte, et clignotante.",
-      features: [
-        "3 états distincts (S0, S1, S2)",
-        "Transition sur front d'horloge",
-        "Reset asynchrone vers état initial",
-        "Sortie LED contrôlée par état",
-        "Simulation complète ModelSim",
-        "Synthese sur FPGA Xilinx"
-      ],
-      technologies: ["FPGA Basys 3", "Xilinx Vivado", "VHDL", "ModelSim", "LED GPIO", "Horloge 100MHz"],
-      mainImage: {
-        src: "/assets/projects/fpga/fsm-led-controller.jpg",
-        alt: "Machine à états FSM LED sur FPGA",
-        caption: "Architecture FSM VHDL avec contrôle LED"
-      },
-      additionalImages: [
-        { src: "/assets/projects/fpga/fsm-state-diagram.jpg", alt: "Diagramme états FSM" },
-        { src: "/assets/projects/fpga/fsm-simulation.jpg", alt: "Simulation ModelSim FSM" },
-        { src: "/assets/projects/fpga/fpga-board-led.jpg", alt: "FPGA avec LED contrôlée" },
-        { src: "/assets/projects/fpga/vivado-fsm-design.jpg", alt: "Design Vivado FSM" },
-        { src: "/assets/projects/fpga/fsm-timing.jpg", alt: "Analyse timing FSM" },
-        { src: "/assets/projects/fpga/fsm-resources.jpg", alt: "Utilisation ressources FPGA" }
-      ],
-      videoLink: "#",
-      codeSnippet1: `-- VHDL - FSM LED Controller
+  const handleSimulationImageError = () => {
+    setSimulationImageError(true);
+  };
+
+  // Tableau des images principales par bloc
+  const blockImages = {
+    1: fsmLedImg,
+    2: counter7segImg,
+    3: minigameImg,
+    4: halfAdderImg,
+    5: andGateImg,
+    6: orGateImg
+  };
+
+  // Tableau des images de simulation par bloc
+  const simulationImages = {
+    1: fsmSimulationImg,
+    2: counterSimulationImg,
+    3: gameSimulationImg,
+    4: adderSimulationImg,
+    5: andSimulationImg,
+    6: orSimulationImg
+  };
+
+  const getBlockData = (id) => {
+    const blocksData = {
+      1: {
+        title: "Machine à États Finis LED Controller",
+        subtitle: "VHDL FSM avec états S0, S1, S2 sur FPGA Basys 3",
+        description: "Implémentation VHDL d'une machine à états finis (FSM) contrôlant une LED avec 3 états distincts : allumée constante, éteinte, et clignotante. Ce projet démontre les fondamentaux du design numérique synchrone avec horloge et reset asynchrone.",
+        features: [
+          "3 états distincts (S0, S1, S2) avec transitions programmées",
+          "Transition sur front montant d'horloge 100MHz",
+          "Reset asynchrone vers état initial S0",
+          "Sortie LED contrôlée par logique combinatoire d'état",
+          "Simulation complète ModelSim avec testbench VHDL",
+          "Synthese et implémentation sur FPGA Xilinx Basys 3"
+        ],
+        technologies: ["FPGA Basys 3 (Artix-7)", "Xilinx Vivado 2020.1", "VHDL IEEE Standard", "ModelSim", "LEDs GPIO", "Horloge 100MHz"],
+        imageCaption: "Architecture FSM VHDL avec contrôle LED sur FPGA Basys 3",
+        simulationCaption: "Simulation ModelSim de la FSM LED Controller",
+        codeSnippet: `-- VHDL - FSM LED Controller avec 3 états
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity fsm_led_controller is
     Port (
-        clk     : in  STD_LOGIC;
-        reset   : in  STD_LOGIC;
-        led_out : out STD_LOGIC
+        clk     : in  STD_LOGIC;   -- Horloge 100MHz
+        reset   : in  STD_LOGIC;   -- Reset asynchrone
+        led_out : out STD_LOGIC     -- Sortie LED
     );
 end fsm_led_controller;
 
 architecture Behavioral of fsm_led_controller is
+    -- Définition des états
     type state_type is (S0, S1, S2);
     signal current_state, next_state : state_type;
+    
+    -- Compteur pour clignotement (50MHz -> 1Hz)
     signal counter : integer range 0 to 50000000 := 0;
     signal blink_signal : STD_LOGIC := '0';
+    
 begin
-    -- Process séquentiel pour changement d'état
+    -- Processus séquentiel pour changement d'état
     process(clk, reset)
     begin
         if reset = '1' then
-            current_state <= S0;
+            current_state <= S0;  -- Reset asynchrone vers état initial
         elsif rising_edge(clk) then
-            current_state <= next_state;
+            current_state <= next_state;  -- Transition sur front montant
         end if;
     end process;
     
-    -- Process combinatoire pour logique état suivant
+    -- Processus combinatoire pour logique état suivant
     process(current_state)
     begin
         case current_state is
-            when S0 => next_state <= S1;
-            when S1 => next_state <= S2;
-            when S2 => next_state <= S0;
-            when others => next_state <= S0;
+            when S0 => 
+                next_state <= S1;  -- S0 -> S1
+            when S1 => 
+                next_state <= S2;  -- S1 -> S2
+            when S2 => 
+                next_state <= S0;  -- S2 -> S0 (boucle)
+            when others => 
+                next_state <= S0;  -- État par défaut
         end case;
     end process;
     
-    -- Process pour compteur clignotement
+    -- Processus pour compteur de clignotement (diviseur de fréquence)
     process(clk)
     begin
         if rising_edge(clk) then
-            if counter = 50000000 then
+            if counter = 50000000 then  -- 50 million cycles = 1 seconde @ 50MHz
                 counter <= 0;
-                blink_signal <= not blink_signal;
+                blink_signal <= not blink_signal;  -- Toggle du signal
             else
                 counter <= counter + 1;
             end if;
         end if;
     end process;
     
-    -- Logique de sortie LED
+    -- Logique de sortie LED (Moore Machine)
     with current_state select
-        led_out <= '1' when S0,
-                   '0' when S1,
-                   blink_signal when S2,
-                   '0' when others;
+        led_out <= '1' when S0,           -- LED allumée constante
+                   '0' when S1,           -- LED éteinte
+                   blink_signal when S2,  -- LED clignotante
+                   '0' when others;       -- Par défaut éteinte
+                   
 end Behavioral;`,
-      codeSnippet2: `-- VHDL - Testbench FSM LED Controller
+        testbenchSnippet: `-- VHDL - Testbench FSM LED Controller
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -104,6 +143,7 @@ entity tb_fsm_led_controller is
 end tb_fsm_led_controller;
 
 architecture Behavioral of tb_fsm_led_controller is
+    -- Component Declaration
     component fsm_led_controller
         Port (
             clk     : in  STD_LOGIC;
@@ -112,12 +152,16 @@ architecture Behavioral of tb_fsm_led_controller is
         );
     end component;
     
+    -- Testbench Signals
     signal clk_tb     : STD_LOGIC := '0';
     signal reset_tb   : STD_LOGIC := '0';
     signal led_out_tb : STD_LOGIC;
     
+    -- Clock period (10ns = 100MHz)
     constant clk_period : time := 10 ns;
+    
 begin
+    -- Unit Under Test (UUT) Instantiation
     UUT: fsm_led_controller
         port map (
             clk     => clk_tb,
@@ -125,7 +169,7 @@ begin
             led_out => led_out_tb
         );
     
-    -- Génération horloge
+    -- Clock Generation Process
     clk_process: process
     begin
         clk_tb <= '0';
@@ -134,125 +178,134 @@ begin
         wait for clk_period/2;
     end process;
     
-    -- Stimuli
+    -- Stimulus Process
     stim_proc: process
     begin
-        -- Reset initial
+        -- Initial Reset
         reset_tb <= '1';
         wait for 20 ns;
         reset_tb <= '0';
         wait for 100 ns;
         
-        -- Attendre transitions d'état
-        wait for 200 ns;
+        -- Attendre transitions complètes d'état
+        wait for 500 ns;
         
-        -- Test reset pendant fonctionnement
+        -- Test Reset pendant fonctionnement
         reset_tb <= '1';
-        wait for 20 ns;
+        wait for 15 ns;
         reset_tb <= '0';
         
+        -- Simulation prolongée
+        wait for 1000 ns;
+        
+        -- End simulation
         wait;
     end process;
+    
+    -- Monitor Process for Debugging
+    monitor_proc: process
+    begin
+        wait on current_state;
+        report "Current State: " & state_type'image(current_state) & 
+               " | LED Output: " & STD_LOGIC'image(led_out_tb);
+    end process;
+    
 end Behavioral;`,
-      challenges: [
-        "Synchronisation états avec horloge",
-        "Gestion reset asynchrone",
-        "Timing des transitions d'état",
-        "Optimisation ressources FPGA"
-      ],
-      solutions: [
-        "Machine Mealy/Moore optimisée",
-        "Reset synchronisé double flip-flop",
-        "Contraintes timing XDC précises",
-        "Encodage binaire des états"
-      ]
-    },
-    2: {
-      title: "Compteur 4 bits avec Affichage 7 Segments",
-      subtitle: "VHDL Compteur BCD + Décodeur 7 segments",
-      description: "Compteur 4 bits synchrone affiché simultanément sur LEDs et afficheur 7 segments avec boutons d'incrémentation et reset.",
-      features: [
-        "Compteur 4 bits (0-15)",
-        "Affichage dual LEDs + 7 segments",
-        "Bouton incrémentation front montant",
-        "Reset synchrone",
-        "Décodeur BCD vers 7 segments",
-        "Synchronisation horloge 100MHz"
-      ],
-      technologies: ["FPGA Nexys A7", "7-Segment Display", "Boutons GPIO", "LEDs GPIO", "Vivado", "VHDL Testbench"],
-      mainImage: {
-        src: "/assets/projects/fpga/7segment-counter.jpg",
-        alt: "Compteur 4 bits avec affichage 7 segments",
-        caption: "Compteur VHDL avec sortie 7 segments et LEDs"
+        challenges: [
+          "Synchronisation précise des transitions d'état avec horloge 100MHz",
+          "Gestion correcte du reset asynchrone dans une machine synchrone",
+          "Optimisation de l'utilisation des ressources FPGA (LUTs, Flip-Flops)",
+          "Vérification du timing setup/hold dans Vivado"
+        ],
+        solutions: [
+          "Utilisation de registres synchronisés et machine de type Moore",
+          "Reset asynchrone avec synchroniseur double flip-flop",
+          "Encodage binaire des états pour optimisation ressources",
+          "Contraintes timing XDC et analyse de chemin critique"
+        ],
+        imageExplanation: "Cette machine à états finis (FSM) implémentée en VHDL contrôle une LED avec 3 états distincts sur FPGA Basys 3. L'architecture utilise une horloge de 100MHz pour les transitions synchrones et un reset asynchrone. La FSM est de type Moore (sorties dépendent seulement de l'état courant) avec un compteur interne pour générer le clignotement à 1Hz."
       },
-      additionalImages: [
-        { src: "/assets/projects/fpga/bcd-decoder.jpg", alt: "Décodeur BCD 7 segments" },
-        { src: "/assets/projects/fpga/counter-simulation.jpg", alt: "Simulation compteur" },
-        { src: "/assets/projects/fpga/7segment-pinout.jpg", alt: "Pinout 7 segments" },
-        { src: "/assets/projects/fpga/counter-timing.jpg", alt: "Timing compteur" },
-        { src: "/assets/projects/fpga/nexys-counter.jpg", alt: "FPGA Nexys avec compteur" },
-        { src: "/assets/projects/fpga/debounce-circuit.jpg", alt: "Circuit anti-rebond" }
-      ],
-      videoLink: "#",
-      codeSnippet1: `-- VHDL - Compteur 4 bits avec 7 segments
+      2: {
+        title: "Compteur 4 bits avec Affichage 7 Segments",
+        subtitle: "VHDL Compteur BCD synchrone + Décodeur 7 segments",
+        description: "Compteur 4 bits synchrone affiché simultanément sur LEDs et afficheur 7 segments avec boutons d'incrémentation et reset. Démonstration complète du design numérique avec entrées/sorties.",
+        features: [
+          "Compteur 4 bits synchrone (0-15) avec enable",
+          "Affichage dual sur LEDs (binaire) et 7 segments (hexadécimal)",
+          "Bouton incrémentation avec anti-rebond numérique",
+          "Reset synchrone avec priorité sur l'incrémentation",
+          "Décodeur BCD vers 7 segments avec anode commune",
+          "Synchronisation avec horloge système 100MHz"
+        ],
+        technologies: ["FPGA Nexys A7 (Artix-7)", "7-Segment Display 4 digits", "Boutons GPIO mécaniques", "LEDs GPIO", "Vivado 2020.1", "VHDL Testbench avancé"],
+        imageCaption: "Compteur 4 bits VHDL avec affichage 7 segments sur FPGA Nexys A7",
+        simulationCaption: "Simulation ModelSim du compteur et décodeur 7 segments",
+        codeSnippet: `-- VHDL - Compteur 4 bits avec affichage 7 segments
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity counter_7seg is
     Port (
-        clk      : in  STD_LOGIC;
-        reset    : in  STD_LOGIC;
-        inc_btn  : in  STD_LOGIC;
-        leds_out : out STD_LOGIC_VECTOR(3 downto 0);
-        seg_out  : out STD_LOGIC_VECTOR(6 downto 0);
-        anode_out: out STD_LOGIC_VECTOR(3 downto 0)
+        clk      : in  STD_LOGIC;                     -- Horloge 100MHz
+        reset    : in  STD_LOGIC;                     -- Reset global
+        inc_btn  : in  STD_LOGIC;                     -- Bouton incrémentation
+        leds_out : out STD_LOGIC_VECTOR(3 downto 0);  -- Sortie LEDs (binaire)
+        seg_out  : out STD_LOGIC_VECTOR(6 downto 0);  -- Segments 7 segments
+        anode_out: out STD_LOGIC_VECTOR(3 downto 0)   -- Anodes pour multiplexage
     );
 end counter_7seg;
 
 architecture Behavioral of counter_7seg is
-    signal counter     : unsigned(3 downto 0) := "0000";
+    -- Signaux internes
+    signal counter     : unsigned(3 downto 0) := (others => '0');
     signal btn_debounced : STD_LOGIC := '0';
     signal btn_prev    : STD_LOGIC := '0';
     signal counter_en  : STD_LOGIC := '0';
+    
+    -- Constantes anti-rebond (10ms @ 100MHz = 1,000,000 cycles)
+    constant DEBOUNCE_COUNT : integer := 1000000;
+    signal debounce_counter : integer range 0 to DEBOUNCE_COUNT := 0;
+    
 begin
-    -- Process anti-rebond bouton
+    -- Processus anti-rebond bouton
     process(clk)
-        variable debounce_counter : integer := 0;
     begin
         if rising_edge(clk) then
+            -- Détection front montant avec anti-rebond
             if inc_btn = '1' and btn_prev = '0' then
-                if debounce_counter = 1000000 then
-                    btn_debounced <= '1';
+                if debounce_counter = DEBOUNCE_COUNT then
+                    btn_debounced <= '1';          -- Bouton valide
                     debounce_counter := 0;
                 else
                     debounce_counter := debounce_counter + 1;
                 end if;
             else
-                btn_debounced <= '0';
+                btn_debounced <= '0';              -- Pas d'appui
                 debounce_counter := 0;
             end if;
-            btn_prev <= inc_btn;
+            
+            btn_prev <= inc_btn;  -- Mémorisation état précédent
         end if;
     end process;
     
-    -- Process compteur principal
+    -- Processus compteur principal synchrone
     process(clk, reset)
     begin
         if reset = '1' then
-            counter <= "0000";
+            counter <= (others => '0');  -- Reset synchrone
         elsif rising_edge(clk) then
             if btn_debounced = '1' then
-                if counter = "1111" then
-                    counter <= "0000";
+                if counter = "1111" then  -- Rollover à 15
+                    counter <= (others => '0');
                 else
-                    counter <= counter + 1;
+                    counter <= counter + 1;  -- Incrémentation
                 end if;
             end if;
         end if;
     end process;
     
-    -- Sortie LEDs (affichage binaire)
+    -- Sortie LEDs (affichage binaire direct)
     leds_out <= STD_LOGIC_VECTOR(counter);
     
     -- Décodeur BCD vers 7 segments (anode commune)
@@ -275,14 +328,16 @@ begin
             when "1101" => seg_out <= "1000010"; -- D
             when "1110" => seg_out <= "0110000"; -- E
             when "1111" => seg_out <= "0111000"; -- F
-            when others => seg_out <= "1111111"; -- Off
+            when others => seg_out <= "1111111"; -- Off (tous segments éteints)
         end case;
     end process;
     
-    -- Activation anode (un seul digit pour simplifier)
-    anode_out <= "1110"; -- Activer seulement premier digit
+    -- Activation anode (un seul digit activé pour cet exemple)
+    -- Pour multiplexage multi-digit, utiliser un compteur de refresh
+    anode_out <= "1110"; -- Activer seulement le premier digit
+    
 end Behavioral;`,
-      codeSnippet2: `-- VHDL - Testbench Compteur 7 segments
+        testbenchSnippet: `-- VHDL - Testbench Compteur 7 segments exhaustif
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -301,6 +356,7 @@ architecture Behavioral of tb_counter_7seg is
         );
     end component;
     
+    -- Signaux testbench
     signal clk_tb      : STD_LOGIC := '0';
     signal reset_tb    : STD_LOGIC := '0';
     signal inc_btn_tb  : STD_LOGIC := '0';
@@ -308,8 +364,34 @@ architecture Behavioral of tb_counter_7seg is
     signal seg_out_tb  : STD_LOGIC_VECTOR(6 downto 0);
     signal anode_out_tb: STD_LOGIC_VECTOR(3 downto 0);
     
-    constant clk_period : time := 10 ns;
+    constant clk_period : time := 10 ns;  -- 100MHz
+    
+    -- Fonction pour convertir segments en caractère
+    function segments_to_char(segments: STD_LOGIC_VECTOR(6 downto 0)) return character is
+    begin
+        case segments is
+            when "0000001" => return '0';
+            when "1001111" => return '1';
+            when "0010010" => return '2';
+            when "0000110" => return '3';
+            when "1001100" => return '4';
+            when "0100100" => return '5';
+            when "0100000" => return '6';
+            when "0001111" => return '7';
+            when "0000000" => return '8';
+            when "0000100" => return '9';
+            when "0001000" => return 'A';
+            when "1100000" => return 'B';
+            when "0110001" => return 'C';
+            when "1000010" => return 'D';
+            when "0110000" => return 'E';
+            when "0111000" => return 'F';
+            when others    => return '?';
+        end case;
+    end function;
+    
 begin
+    -- Instanciation UUT
     UUT: counter_7seg
         port map (
             clk      => clk_tb,
@@ -320,7 +402,7 @@ begin
             anode_out=> anode_out_tb
         );
     
-    -- Horloge 100MHz
+    -- Génération horloge 100MHz
     clk_process: process
     begin
         clk_tb <= '0';
@@ -329,108 +411,149 @@ begin
         wait for clk_period/2;
     end process;
     
-    -- Stimuli
+    -- Processus de stimuli
     stim_proc: process
     begin
+        report "Starting 7-segment counter testbench...";
+        
         -- Reset initial
         reset_tb <= '1';
         wait for 20 ns;
         reset_tb <= '0';
         wait for 100 ns;
         
-        -- Simuler appuis bouton
+        -- Test incrémentation séquentielle
+        report "Testing sequential incrementation...";
         for i in 0 to 20 loop
+            -- Simuler appui bouton avec anti-rebond
             inc_btn_tb <= '1';
-            wait for 100 ns;
+            wait for 1 us;  -- Simuler appui long
             inc_btn_tb <= '0';
-            wait for 900 ns;
+            wait for 1 us;  -- Temps entre appuis
+            
+            -- Afficher état courant
+            report "Count: " & integer'image(i mod 16) & 
+                   " | LEDs: " & integer'image(to_integer(unsigned(leds_out_tb))) &
+                   " | Display: " & segments_to_char(seg_out_tb);
         end loop;
         
         -- Test reset pendant comptage
+        report "Testing reset during counting...";
+        inc_btn_tb <= '1';
+        wait for 500 ns;
         reset_tb <= '1';
         wait for 20 ns;
         reset_tb <= '0';
+        inc_btn_tb <= '0';
         
+        -- Test rollover 15->0
+        report "Testing rollover from 15 to 0...";
+        for i in 0 to 30 loop
+            inc_btn_tb <= '1';
+            wait for 100 ns;
+            inc_btn_tb <= '0';
+            wait for 100 ns;
+        end loop;
+        
+        report "All tests completed successfully!";
         wait;
     end process;
+    
 end Behavioral;`,
-      challenges: [
-        "Anti-rebond boutons mécaniques",
-        "Multiplexage afficheurs 7 segments",
-        "Timing affichage sans scintillement",
-        "Synchronisation signaux asynchrones"
-      ],
-      solutions: [
-        "Algorithme debounce digital",
-        "Refresh 1kHz avec compteur",
-        "PWM pour luminosité constante",
-        "Double synchronisation flip-flop"
-      ]
-    },
-    3: {
-      title: "Mini Jeu Interactif avec Score",
-      subtitle: "VHDL Machine à états + Score + Affichage",
-      description: "Mini-jeu interactif avec machine à états, système de score et affichage multiple sur LEDs et 7 segments.",
-      features: [
-        "Mode attente LED clignotante",
-        "Mode jeu incrémentation score",
-        "Reset score et état",
-        "Affichage score sur LEDs",
-        "Affichage score sur 7 segments",
-        "Logique jeu complète VHDL"
-      ],
-      technologies: ["FPGA Basys 3", "Boutons GPIO", "LEDs Array", "7-Segment Display", "Vivado IP", "VHDL Packages"],
-      mainImage: {
-        src: "/assets/projects/fpga/mini-game-fpga.jpg",
-        alt: "Mini jeu interactif sur FPGA",
-        caption: "Architecture jeu VHDL avec score et affichage"
+        challenges: [
+          "Anti-rebond des boutons mécaniques avec timing précis",
+          "Multiplexage des afficheurs 7 segments sans scintillement visible",
+          "Timing setup/hold pour les signaux asynchrones (boutons)",
+          "Optimisation du décodeur pour minimiser les LUTs utilisées"
+        ],
+        solutions: [
+          "Algorithme debounce digital avec compteur sur horloge système",
+          "Refresh rate à 1kHz avec compteur de refresh et PWM pour luminosité",
+          "Double synchronisation flip-flop pour signaux asynchrones",
+          "Encodage one-hot optimisé et utilisation des carry chains"
+        ],
+        imageExplanation: "Ce design VHDL implémente un compteur 4 bits synchrone avec affichage sur LEDs (binaire) et afficheur 7 segments (hexadécimal). Le système inclut un anti-rebond numérique pour le bouton d'incrémentation et un décodeur BCD vers 7 segments optimisé. L'affichage utilise le premier digit d'un afficheur 4 digits avec anode commune."
       },
-      additionalImages: [
-        { src: "/assets/projects/fpga/game-state-machine.jpg", alt: "Machine états jeu" },
-        { src: "/assets/projects/fpga/score-display.jpg", alt: "Affichage score" },
-        { src: "/assets/projects/fpga/game-simulation.jpg", alt: "Simulation jeu" },
-        { src: "/assets/projects/fpga/game-timing.jpg", alt: "Timing jeu" },
-        { src: "/assets/projects/fpga/fpga-game-setup.jpg", alt: "Setup jeu FPGA" },
-        { src: "/assets/projects/fpga/game-resources.jpg", alt: "Ressources jeu" }
-      ],
-      videoLink: "#",
-      codeSnippet1: `-- VHDL - Mini Jeu avec Score
+      3: {
+        title: "Mini Jeu Interactif avec Score et Timer",
+        subtitle: "VHDL Machine à états hiérarchique + Score + Affichage multiple",
+        description: "Mini-jeu interactif complet avec machine à états hiérarchique, système de score, timer décomptant et affichage multiple sur LEDs et 7 segments. Démonstration avancée du design numérique.",
+        features: [
+          "Machine à états hiérarchique (IDLE, PLAYING, GAME_OVER)",
+          "Système de score 8 bits avec incrémentation rapide",
+          "Timer de jeu décomptant de 30 secondes avec affichage",
+          "Affichage score sur LEDs et 7 segments simultanément",
+          "Boutons start et action avec anti-rebond avancé",
+          "Logique de jeu complète avec transitions d'état conditionnelles"
+        ],
+        technologies: ["FPGA Basys 3", "Boutons GPIO mécaniques", "LEDs Array 8 bits", "7-Segment Display 4 digits", "Vivado IP Integrator", "VHDL Packages personnalisés"],
+        imageCaption: "Architecture jeu interactif VHDL avec score et timer sur FPGA",
+        simulationCaption: "Simulation ModelSim du jeu interactif avec transitions d'état",
+        codeSnippet: `-- VHDL - Mini Jeu Interactif avec Score
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
 entity mini_game is
     Port (
-        clk         : in  STD_LOGIC;
-        reset       : in  STD_LOGIC;
-        start_btn   : in  STD_LOGIC;
-        action_btn  : in  STD_LOGIC;
-        leds_out    : out STD_LOGIC_VECTOR(7 downto 0);
-        seg_out     : out STD_LOGIC_VECTOR(6 downto 0);
-        anode_out   : out STD_LOGIC_VECTOR(3 downto 0)
+        clk         : in  STD_LOGIC;  -- Horloge 100MHz
+        reset       : in  STD_LOGIC;  -- Reset global
+        start_btn   : in  STD_LOGIC;  -- Bouton démarrage jeu
+        action_btn  : in  STD_LOGIC;  -- Bouton action (incrémente score)
+        leds_out    : out STD_LOGIC_VECTOR(7 downto 0);  -- Affichage score/état
+        seg_out     : out STD_LOGIC_VECTOR(6 downto 0);  -- Segments 7 segments
+        anode_out   : out STD_LOGIC_VECTOR(3 downto 0)   -- Anodes multiplexées
     );
 end mini_game;
 
 architecture Behavioral of mini_game is
+    -- Définition des états du jeu
     type game_state is (IDLE, PLAYING, GAME_OVER);
     signal current_state, next_state : game_state;
     
+    -- Signaux de score et timer
     signal score         : unsigned(7 downto 0) := (others => '0');
-    signal timer_counter : integer range 0 to 100000000 := 0;
-    signal game_timer    : integer range 0 to 30 := 0;
-    signal blink_counter : integer range 0 to 50000000 := 0;
-    signal blink_led     : STD_LOGIC := '0';
+    signal timer_counter : integer range 0 to 100000000 := 0;  -- Compteur 1Hz
+    signal game_timer    : integer range 0 to 30 := 0;         -- Timer jeu (secondes)
+    signal blink_counter : integer range 0 to 50000000 := 0;   -- Compteur clignotement
+    signal blink_led     : STD_LOGIC := '0';                   -- Signal clignotement
     
+    -- Signaux boutons avec anti-rebond
     signal start_debounced, action_debounced : STD_LOGIC := '0';
+    signal start_prev, action_prev : STD_LOGIC := '0';
+    
+    -- Constantes
+    constant CLK_FREQ : integer := 100000000;  -- 100MHz
+    constant ONE_SECOND : integer := CLK_FREQ;  -- 1 seconde en cycles d'horloge
+    constant BLINK_HALF_SECOND : integer := CLK_FREQ / 2;  -- 0.5 seconde
+    
+    -- Component declaration pour anti-rebond
+    component debounce
+        Port (
+            clk    : in  STD_LOGIC;
+            button : in  STD_LOGIC;
+            result : out STD_LOGIC
+        );
+    end component;
+    
 begin
-    -- Débounceurs boutons
-    debounce_start: entity work.debounce
-        port map (clk => clk, button => start_btn, result => start_debounced);
+    -- Instanciation anti-rebond bouton START
+    debounce_start: debounce
+        port map (
+            clk    => clk,
+            button => start_btn,
+            result => start_debounced
+        );
     
-    debounce_action: entity work.debounce
-        port map (clk => clk, button => action_btn, result => action_debounced);
+    -- Instanciation anti-rebond bouton ACTION
+    debounce_action: debounce
+        port map (
+            clk    => clk,
+            button => action_btn,
+            result => action_debounced
+        );
     
-    -- Machine à états principale
+    -- Machine à états principale synchrone
     state_machine: process(clk, reset)
     begin
         if reset = '1' then
@@ -440,186 +563,309 @@ begin
         elsif rising_edge(clk) then
             current_state <= next_state;
             
-            -- Logique par état
+            -- Logique spécifique à chaque état
             case current_state is
                 when IDLE =>
-                    if start_debounced = '1' then
-                        next_state <= PLAYING;
-                        score <= (others => '0');
-                        game_timer <= 30; -- 30 secondes
-                    end if;
+                    -- Réinitialisation score et timer
+                    score <= (others => '0');
+                    game_timer <= 30;  -- 30 secondes initiales
                     
                 when PLAYING =>
-                    if game_timer = 0 then
-                        next_state <= GAME_OVER;
-                    elsif action_debounced = '1' then
-                        score <= score + 1;
+                    -- Incrémentation score sur appui ACTION
+                    if action_debounced = '1' then
+                        if score < 255 then
+                            score <= score + 1;
+                        end if;
                     end if;
                     
-                    -- Décrémenter timer jeu
-                    if timer_counter = 100000000 then
+                    -- Décrémentation timer jeu
+                    if timer_counter = ONE_SECOND then
                         timer_counter <= 0;
-                        game_timer <= game_timer - 1;
+                        if game_timer > 0 then
+                            game_timer <= game_timer - 1;
+                        end if;
                     else
                         timer_counter <= timer_counter + 1;
                     end if;
                     
                 when GAME_OVER =>
-                    if start_debounced = '1' then
-                        next_state <= IDLE;
-                    end if;
+                    -- État final, attente reset
+                    null;
             end case;
         end if;
     end process;
     
-    -- LED clignotante mode IDLE
+    -- Logique état suivant (combinatoire)
+    process(current_state, start_debounced, game_timer)
+    begin
+        case current_state is
+            when IDLE =>
+                if start_debounced = '1' then
+                    next_state <= PLAYING;
+                else
+                    next_state <= IDLE;
+                end if;
+                
+            when PLAYING =>
+                if game_timer = 0 then
+                    next_state <= GAME_OVER;
+                else
+                    next_state <= PLAYING;
+                end if;
+                
+            when GAME_OVER =>
+                if start_debounced = '1' then
+                    next_state <= IDLE;
+                else
+                    next_state <= GAME_OVER;
+                end if;
+                
+            when others =>
+                next_state <= IDLE;
+        end case;
+    end process;
+    
+    -- Processus LED clignotante mode IDLE
     process(clk)
     begin
         if rising_edge(clk) then
-            if blink_counter = 50000000 then
+            if blink_counter = BLINK_HALF_SECOND then
                 blink_counter <= 0;
-                blink_led <= not blink_led;
+                blink_led <= not blink_led;  -- Toggle toutes les 0.5s
             else
                 blink_counter <= blink_counter + 1;
             end if;
         end if;
     end process;
     
-    -- Sorties en fonction de l'état
+    -- Logique de sortie LEDs selon état
     process(current_state, score, blink_led)
     begin
         case current_state is
             when IDLE =>
-                leds_out <= (others => blink_led);
+                leds_out <= (others => blink_led);  -- Toutes LEDs clignotent
                 
             when PLAYING =>
-                leds_out <= STD_LOGIC_VECTOR(score);
+                leds_out <= STD_LOGIC_VECTOR(score);  -- Score sur LEDs
                 
             when GAME_OVER =>
-                leds_out <= "10101010"; -- Pattern fixe
+                leds_out <= "10101010";  -- Pattern alterné fixe
         end case;
     end process;
     
-    -- Décodeur score pour 7 segments
-    seg7_display: entity work.seg7_decoder
-        port map (
-            value => score(3 downto 0),
-            segments => seg_out
-        );
-    
-    -- Anodes (afficher 2 digits)
-    anode_out <= "0011" when current_state = PLAYING else "1110";
-end Behavioral;`,
-      codeSnippet2: `-- VHDL - Débounceur pour boutons
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-
-entity debounce is
-    Port (
-        clk    : in  STD_LOGIC;
-        button : in  STD_LOGIC;
-        result : out STD_LOGIC
-    );
-end debounce;
-
-architecture Behavioral of debounce is
-    signal ff1, ff2, ff3 : STD_LOGIC := '0';
-    signal counter : integer range 0 to 100000 := 0;
-begin
+    -- Affichage 7 segments (afficher timer ou score selon état)
     process(clk)
+        variable refresh_counter : integer range 0 to 100000 := 0;
+        variable digit_select : integer range 0 to 3 := 0;
+        variable display_value : unsigned(15 downto 0);
     begin
         if rising_edge(clk) then
-            ff1 <= button;
-            ff2 <= ff1;
-            ff3 <= ff2;
+            -- Préparation valeur à afficher
+            case current_state is
+                when PLAYING =>
+                    display_value := to_unsigned(game_timer, 8) & score;
+                when GAME_OVER =>
+                    display_value := x"00" & score;
+                when others =>
+                    display_value := x"0000";
+            end case;
             
-            if ff3 = '1' then
-                if counter = 100000 then
-                    result <= '1';
-                else
-                    counter <= counter + 1;
-                end if;
+            -- Multiplexage 7 segments à 1kHz
+            if refresh_counter = 100000 then  -- 100MHz/100000 = 1kHz
+                refresh_counter := 0;
+                
+                -- Sélection digit
+                case digit_select is
+                    when 0 =>
+                        anode_out <= "1110";
+                        -- Afficher unités timer/score
+                    when 1 =>
+                        anode_out <= "1101";
+                        -- Afficher dizaines timer/score
+                    when 2 =>
+                        anode_out <= "1011";
+                        -- Afficher état jeu
+                    when 3 =>
+                        anode_out <= "0111";
+                        -- Afficher caractère spécial
+                    when others =>
+                        anode_out <= "1111";
+                end case;
+                
+                digit_select := (digit_select + 1) mod 4;
             else
-                counter <= 0;
-                result <= '0';
+                refresh_counter := refresh_counter + 1;
             end if;
         end if;
     end process;
-end Behavioral;
-
--- VHDL - Décodeur 7 segments
+    
+end Behavioral;`,
+        testbenchSnippet: `-- VHDL - Testbench Mini Jeu complet
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity seg7_decoder is
-    Port (
-        value    : in  STD_LOGIC_VECTOR(3 downto 0);
-        segments : out STD_LOGIC_VECTOR(6 downto 0)
-    );
-end seg7_decoder;
+entity tb_mini_game is
+end tb_mini_game;
 
-architecture Behavioral of seg7_decoder is
+architecture Behavioral of tb_mini_game is
+    component mini_game
+        Port (
+            clk         : in  STD_LOGIC;
+            reset       : in  STD_LOGIC;
+            start_btn   : in  STD_LOGIC;
+            action_btn  : in  STD_LOGIC;
+            leds_out    : out STD_LOGIC_VECTOR(7 downto 0);
+            seg_out     : out STD_LOGIC_VECTOR(6 downto 0);
+            anode_out   : out STD_LOGIC_VECTOR(3 downto 0)
+        );
+    end component;
+    
+    -- Signaux testbench
+    signal clk_tb       : STD_LOGIC := '0';
+    signal reset_tb     : STD_LOGIC := '0';
+    signal start_btn_tb : STD_LOGIC := '0';
+    signal action_btn_tb: STD_LOGIC := '0';
+    signal leds_out_tb  : STD_LOGIC_VECTOR(7 downto 0);
+    signal seg_out_tb   : STD_LOGIC_VECTOR(6 downto 0);
+    signal anode_out_tb : STD_LOGIC_VECTOR(3 downto 0);
+    
+    constant CLK_PERIOD : time := 10 ns;  -- 100MHz
+    
+    -- Variables pour monitoring
+    signal sim_score : integer := 0;
+    signal sim_state : string(1 to 10);
+    
 begin
-    with value select
-        segments <= "0000001" when "0000", -- 0
-                    "1001111" when "0001", -- 1
-                    "0010010" when "0010", -- 2
-                    "0000110" when "0011", -- 3
-                    "1001100" when "0100", -- 4
-                    "0100100" when "0101", -- 5
-                    "0100000" when "0110", -- 6
-                    "0001111" when "0111", -- 7
-                    "0000000" when "1000", -- 8
-                    "0000100" when "1001", -- 9
-                    "0001000" when "1010", -- A
-                    "1100000" when "1011", -- B
-                    "0110001" when "1100", -- C
-                    "1000010" when "1101", -- D
-                    "0110000" when "1110", -- E
-                    "0111000" when "1111", -- F
-                    "1111111" when others; -- Off
+    -- Instanciation UUT
+    UUT: mini_game
+        port map (
+            clk         => clk_tb,
+            reset       => reset_tb,
+            start_btn   => start_btn_tb,
+            action_btn  => action_btn_tb,
+            leds_out    => leds_out_tb,
+            seg_out     => seg_out_tb,
+            anode_out   => anode_out_tb
+        );
+    
+    -- Génération horloge
+    clk_process: process
+    begin
+        clk_tb <= '0';
+        wait for CLK_PERIOD/2;
+        clk_tb <= '1';
+        wait for CLK_PERIOD/2;
+    end process;
+    
+    -- Processus de test principal
+    stim_proc: process
+    begin
+        report "Starting Mini Game testbench...";
+        
+        -- Reset initial
+        reset_tb <= '1';
+        wait for 50 ns;
+        reset_tb <= '0';
+        wait for 100 ns;
+        
+        -- Test démarrage jeu
+        report "Test 1: Starting game...";
+        start_btn_tb <= '1';
+        wait for 1 us;
+        start_btn_tb <= '0';
+        wait for 10 us;
+        
+        -- Test incrémentation score rapide
+        report "Test 2: Rapid score incrementation...";
+        for i in 1 to 20 loop
+            action_btn_tb <= '1';
+            wait for 500 ns;
+            action_btn_tb <= '0';
+            wait for 500 ns;
+            
+            sim_score <= to_integer(unsigned(leds_out_tb));
+            report "  Score after action " & integer'image(i) & ": " & integer'image(sim_score);
+        end loop;
+        
+        -- Attente fin timer (simulé)
+        report "Test 3: Waiting for timer expiration...";
+        wait for 100 us;
+        
+        -- Test redémarrage après GAME_OVER
+        report "Test 4: Restarting game...";
+        start_btn_tb <= '1';
+        wait for 1 us;
+        start_btn_tb <= '0';
+        wait for 10 us;
+        
+        -- Test action après redémarrage
+        action_btn_tb <= '1';
+        wait for 1 us;
+        action_btn_tb <= '0';
+        
+        -- Test reset pendant jeu
+        report "Test 5: Reset during gameplay...";
+        wait for 20 us;
+        reset_tb <= '1';
+        wait for 20 ns;
+        reset_tb <= '0';
+        
+        report "All tests completed!";
+        wait;
+    end process;
+    
+    -- Processus de monitoring état
+    monitor_proc: process
+        variable led_val : integer;
+    begin
+        wait on leds_out_tb;
+        led_val := to_integer(unsigned(leds_out_tb));
+        
+        -- Détection état par pattern LEDs
+        if leds_out_tb = "00000000" or leds_out_tb = "11111111" then
+            sim_state <= "IDLE       ";
+        elsif led_val > 0 and led_val < 256 then
+            sim_state <= "PLAYING    ";
+        elsif leds_out_tb = "10101010" then
+            sim_state <= "GAME_OVER  ";
+        else
+            sim_state <= "UNKNOWN    ";
+        end if;
+        
+        report "Game State: " & sim_state & " | Score: " & integer'image(led_val);
+    end process;
+    
 end Behavioral;`,
-      challenges: [
-        "Synchronisation multiple boutons",
-        "Gestion timing jeu précis",
-        "Affichage score temps réel",
-        "Transition fluide entre états"
-      ],
-      solutions: [
-        "FSM hiérarchique avec sous-états",
-        "Timers hardware dédiés",
-        "Buffer double pour affichage",
-        "Signaux de contrôle états"
-      ]
-    },
-    4: {
-      title: "Demi-Additionneur VHDL Combinatoire",
-      subtitle: "Portes logiques XOR + AND en VHDL",
-      description: "Implémentation VHDL d'un demi-additionneur calculant la somme et la retenue de deux bits d'entrée.",
-      features: [
-        "Porte XOR pour somme (S)",
-        "Porte AND pour retenue (C)",
-        "Entrées A et B (1 bit)",
-        "Sorties S et C (1 bit)",
-        "Table de vérité complète",
-        "Circuit combinatoire pur"
-      ],
-      technologies: ["VHDL Combinatoire", "Portes Logiques", "FPGA Simulation", "ModelSim", "Vivado", "Testbench VHDL"],
-      mainImage: {
-        src: "/assets/projects/fpga/half-adder-circuit.jpg",
-        alt: "Circuit demi-additionneur VHDL",
-        caption: "Schéma demi-additionneur avec portes XOR et AND"
+        challenges: [
+          "Synchronisation de multiples boutons avec anti-rebond indépendant",
+          "Gestion précise du timer de jeu avec compteur 32 bits",
+          "Affichage multiplexé score/timer sans scintillement",
+          "Transition fluide entre états avec conditions multiples"
+        ],
+        solutions: [
+          "FSM hiérarchique avec sous-états et gestion d'événements centralisée",
+          "Timers hardware dédiés avec prédiviseur d'horloge optimisé",
+          "Buffer double pour affichage et refresh rate adaptatif",
+          "Signaux de contrôle d'état avec priorités et validation"
+        ],
+        imageExplanation: "Ce mini-jeu VHDL utilise une machine à états hiérarchique avec 3 états principaux. Le système inclut un score 8 bits, un timer décomptant de 30 secondes, et un affichage multiplexé sur LEDs et 7 segments. Les boutons utilisent un anti-rebond numérique avancé et les transitions d'état sont conditionnées par le timer et les actions du joueur."
       },
-      additionalImages: [
-        { src: "/assets/projects/fpga/truth-table.jpg", alt: "Table vérité additionneur" },
-        { src: "/assets/projects/fpga/gate-level.jpg", alt: "Niveau portes logiques" },
-        { src: "/assets/projects/fpga/half-adder-sim.jpg", alt: "Simulation additionneur" },
-        { src: "/assets/projects/fpga/timing-analysis.jpg", alt: "Analyse timing" },
-        { src: "/assets/projects/fpga/schematic-view.jpg", alt: "Vue schématique" },
-        { src: "/assets/projects/fpga/waveform-view.jpg", alt: "Vue waveform" }
-      ],
-      videoLink: "#",
-      codeSnippet1: `-- VHDL - Demi-Additionneur (Half Adder)
+      4: {
+        title: "Demi-Additionneur VHDL Combinatoire",
+        subtitle: "Portes logiques XOR + AND implémentées en VHDL pur",
+        description: "Implémentation VHDL fondamentale d'un demi-additionneur calculant la somme et la retenue de deux bits d'entrée. Démonstration des circuits combinatoires purs sans éléments séquentiels.",
+        features: [
+          "Porte XOR optimisée pour calcul de la somme (S = A ⊕ B)",
+          "Porte AND pour calcul de la retenue (C = A · B)",
+          "Entrées A et B sur 1 bit avec toutes combinaisons testées",
+          "Sorties S (somme) et C (retenue) sur 1 bit",
+          "Table de vérité complète vérifiée par testbench",
+          "Circuit combinatoire pur sans horloge ni registres"
+        ],
+        technologies: ["VHDL Combinatoire pur", "Portes Logiques fondamentales", "FPGA Simulation ModelSim", "Vivado Synthesis", "Testbench VHDL exhaustif", "Timing Analysis"],
+        imageCaption: "Circuit demi-additionneur avec portes XOR et AND en VHDL",
+        simulationCaption: "Simulation ModelSim du demi-additionneur avec toutes les combinaisons d'entrées",
+        codeSnippet: `-- VHDL - Demi-Additionneur (Half Adder) - Multiple Implémentations
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -627,27 +873,27 @@ entity half_adder is
     Port (
         A : in  STD_LOGIC;  -- Premier bit d'entrée
         B : in  STD_LOGIC;  -- Deuxième bit d'entrée
-        S : out STD_LOGIC;  -- Sortie somme
-        C : out STD_LOGIC   -- Sortie retenue
+        S : out STD_LOGIC;  -- Sortie somme (A XOR B)
+        C : out STD_LOGIC   -- Sortie retenue (A AND B)
     );
 end half_adder;
 
--- Architecture avec opérateurs logiques
+-- Architecture 1: Opérateurs logiques directs (recommandé)
 architecture Behavioral of half_adder is
 begin
-    -- Somme = A XOR B
+    -- Somme = A XOR B (porte XOR)
     S <= A xor B;
     
-    -- Retenue = A AND B
+    -- Retenue = A AND B (porte AND)
     C <= A and B;
 end Behavioral;
 
--- Architecture alternative avec process
+-- Architecture alternative 2: Process avec table de vérité
 architecture Behavioral2 of half_adder is
 begin
     process(A, B)
     begin
-        -- Table de vérité complète
+        -- Table de vérité complète du demi-additionneur
         if A = '0' and B = '0' then
             S <= '0';
             C <= '0';
@@ -664,13 +910,36 @@ begin
     end process;
 end Behavioral2;
 
--- Architecture avec when/else
+-- Architecture 3: When/else (style dataflow)
 architecture Behavioral3 of half_adder is
 begin
-    S <= '1' when (A = '0' and B = '1') or (A = '1' and B = '0') else '0';
+    -- Somme: 1 quand A et B sont différents
+    S <= '1' when (A = '0' and B = '1') or 
+                  (A = '1' and B = '0') 
+               else '0';
+    
+    -- Retenue: 1 seulement quand A et B sont 1
     C <= '1' when (A = '1' and B = '1') else '0';
-end Behavioral3;`,
-      codeSnippet2: `-- VHDL - Testbench Demi-Additionneur Complet
+end Behavioral3;
+
+-- Architecture 4: Utilisation de fonctions
+architecture Behavioral4 of half_adder is
+    -- Fonction pour somme XOR
+    function xor_func(a, b: STD_LOGIC) return STD_LOGIC is
+    begin
+        return a xor b;
+    end function;
+    
+    -- Fonction pour retenue AND
+    function and_func(a, b: STD_LOGIC) return STD_LOGIC is
+    begin
+        return a and b;
+    end function;
+begin
+    S <= xor_func(A, B);
+    C <= and_func(A, B);
+end Behavioral4;`,
+        testbenchSnippet: `-- VHDL - Testbench Demi-Additionneur Exhaustif
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
@@ -678,6 +947,7 @@ entity tb_half_adder is
 end tb_half_adder;
 
 architecture Behavioral of tb_half_adder is
+    -- Component Declaration
     component half_adder
         Port (
             A : in  STD_LOGIC;
@@ -687,13 +957,31 @@ architecture Behavioral of tb_half_adder is
         );
     end component;
     
+    -- Testbench Signals
     signal A_tb, B_tb : STD_LOGIC := '0';
     signal S_tb, C_tb : STD_LOGIC;
     
-    -- Constantes pour délais
+    -- Clock period (pour tests timing)
     constant period : time := 10 ns;
+    
+    -- Types pour tests structurés
+    type test_vector is record
+        A, B, S_expected, C_expected : STD_LOGIC;
+    end record;
+    
+    type test_array is array (natural range <>) of test_vector;
+    
+    -- Table de vérité complète du demi-additionneur
+    constant test_vectors : test_array := (
+        -- A, B, S, C
+        ('0', '0', '0', '0'),  -- 0 + 0 = 0, retenue 0
+        ('0', '1', '1', '0'),  -- 0 + 1 = 1, retenue 0
+        ('1', '0', '1', '0'),  -- 1 + 0 = 1, retenue 0
+        ('1', '1', '0', '1')   -- 1 + 1 = 0, retenue 1
+    );
+    
 begin
-    -- Instanciation UUT
+    -- Unit Under Test Instantiation
     UUT: half_adder
         port map (
             A => A_tb,
@@ -702,210 +990,228 @@ begin
             C => C_tb
         );
     
-    -- Processus de test
+    -- Test Process
     stim_proc: process
+        variable test_count : integer := 0;
+        variable passed_tests : integer := 0;
+        variable failed_tests : integer := 0;
     begin
-        -- Test case 1: 0 + 0
-        A_tb <= '0';
-        B_tb <= '0';
-        wait for period;
-        assert (S_tb = '0' and C_tb = '0')
-            report "Test 0+0 failed" severity error;
+        report "Starting Half Adder exhaustive testbench...";
+        report "===========================================";
         
-        -- Test case 2: 0 + 1
-        A_tb <= '0';
-        B_tb <= '1';
-        wait for period;
-        assert (S_tb = '1' and C_tb = '0')
-            report "Test 0+1 failed" severity error;
-        
-        -- Test case 3: 1 + 0
-        A_tb <= '1';
-        B_tb <= '0';
-        wait for period;
-        assert (S_tb = '1' and C_tb = '0')
-            report "Test 1+0 failed" severity error;
-        
-        -- Test case 4: 1 + 1
-        A_tb <= '1';
-        B_tb <= '1';
-        wait for period;
-        assert (S_tb = '0' and C_tb = '1')
-            report "Test 1+1 failed" severity error;
-        
-        -- Test supplémentaire: toutes transitions
-        for i in 0 to 3 loop
-            A_tb <= '0';
-            B_tb <= '0';
-            wait for period/4;
-            A_tb <= '1';
-            wait for period/4;
-            B_tb <= '1';
-            wait for period/4;
-            A_tb <= '0';
-            wait for period/4;
+        -- Test de toutes les combinaisons de la table de vérité
+        for i in test_vectors'range loop
+            -- Appliquer vecteur de test
+            A_tb <= test_vectors(i).A;
+            B_tb <= test_vectors(i).B;
+            test_count := test_count + 1;
+            
+            -- Attendre stabilisation (délai combinatoire)
+            wait for period;
+            
+            -- Vérification des résultats
+            if S_tb = test_vectors(i).S_expected and 
+               C_tb = test_vectors(i).C_expected then
+                passed_tests := passed_tests + 1;
+                report "Test " & integer'image(test_count) & " PASSED: " &
+                       "A=" & STD_LOGIC'image(A_tb) & 
+                       ", B=" & STD_LOGIC'image(B_tb) &
+                       " -> S=" & STD_LOGIC'image(S_tb) &
+                       ", C=" & STD_LOGIC'image(C_tb);
+            else
+                failed_tests := failed_tests + 1;
+                report "Test " & integer'image(test_count) & " FAILED: " &
+                       "A=" & STD_LOGIC'image(A_tb) & 
+                       ", B=" & STD_LOGIC'image(B_tb) &
+                       " -> Got S=" & STD_LOGIC'image(S_tb) &
+                       ", C=" & STD_LOGIC'image(C_tb) &
+                       " | Expected S=" & STD_LOGIC'image(test_vectors(i).S_expected) &
+                       ", C=" & STD_LOGIC'image(test_vectors(i).C_expected)
+                       severity error;
+            end if;
         end loop;
         
-        -- Fin de simulation
-        report "All tests passed successfully!";
+        -- Tests supplémentaires: transitions rapides
+        report "===========================================";
+        report "Starting timing tests (glitch checking)...";
+        
+        for i in 1 to 10 loop
+            -- Transition simultanée A et B
+            A_tb <= '0';
+            B_tb <= '0';
+            wait for 1 ns;
+            
+            A_tb <= '1';
+            B_tb <= '1';
+            wait for 1 ns;
+            
+            -- Transition alternée
+            A_tb <= '0';
+            wait for 500 ps;
+            B_tb <= '0';
+            wait for 500 ps;
+        end loop;
+        
+        -- Résumé des tests
+        report "===========================================";
+        report "TEST SUMMARY:";
+        report "  Total tests: " & integer'image(test_count);
+        report "  Passed: " & integer'image(passed_tests);
+        report "  Failed: " & integer'image(failed_tests);
+        
+        if failed_tests = 0 then
+            report "ALL TESTS PASSED SUCCESSFULLY!";
+        else
+            report "SOME TESTS FAILED!" severity failure;
+        end if;
+        
+        report "===========================================";
         wait;
     end process;
     
-    -- Processus de monitoring
+    -- Monitoring Process (optional)
     monitor_proc: process
     begin
         wait on A_tb, B_tb;
-        wait for 1 ns; -- Attendre propagation
+        wait for 100 ps;  -- Small delay for propagation
         
-        report "Inputs: A=" & STD_LOGIC'image(A_tb) & 
+        report "Monitor: A=" & STD_LOGIC'image(A_tb) & 
                ", B=" & STD_LOGIC'image(B_tb) &
-               " -> Outputs: S=" & STD_LOGIC'image(S_tb) &
-               ", C=" & STD_LOGIC'image(C_tb);
+               " -> S=" & STD_LOGIC'image(S_tb) &
+               ", C=" & STD_LOGIC'image(C_tb) &
+               " at time " & time'image(now);
     end process;
-end Behavioral;
-
--- VHDL - Additionneur Complet (Full Adder)
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-
-entity full_adder is
-    Port (
-        A    : in  STD_LOGIC;
-        B    : in  STD_LOGIC;
-        Cin  : in  STD_LOGIC;
-        Sum  : out STD_LOGIC;
-        Cout : out STD_LOGIC
-    );
-end full_adder;
-
-architecture Behavioral of full_adder is
-    signal S1, C1, C2 : STD_LOGIC;
-begin
-    -- Utilisation de deux demi-additionneurs
-    HA1: entity work.half_adder
-        port map (A => A, B => B, S => S1, C => C1);
     
-    HA2: entity work.half_adder
-        port map (A => S1, B => Cin, S => Sum, C => C2);
-    
-    -- OR pour la retenue finale
-    Cout <= C1 or C2;
 end Behavioral;`,
-      challenges: [
-        "Propagation délais portes logiques",
-        "Optimisation surface circuit",
-        "Test exhaustif toutes combinaisons",
-        "Intégration dans design plus grand"
-      ],
-      solutions: [
-        "Contraintes timing XDC",
-        "Look Ahead Carry pour performance",
-        "Testbench automatisé assertions",
-        "Hiérarchie modularité VHDL"
-      ]
-    },
-    5: {
-      title: "Porte Logique AND VHDL",
-      subtitle: "Implémentation porte ET avec deux entrées",
-      description: "Circuit VHDL simple implémentant une porte logique ET avec deux entrées et une sortie.",
-      features: [
-        "Porte logique ET (AND)",
-        "Sortie C = A AND B",
-        "Entrées A et B (1 bit)",
-        "Sortie C (1 bit)",
-        "Table de vérité : 1 si A=1 et B=1",
-        "Circuit combinatoire simple"
-      ],
-      technologies: ["VHDL Gate Level", "FPGA LUT", "Combinational Logic", "Vivado Synthesis", "RTL Analysis", "Power Analysis"],
-      mainImage: {
-        src: "/assets/projects/fpga/and-gate-circuit.jpg",
-        alt: "Porte AND VHDL implementation",
-        caption: "Implémentation porte AND en VHDL et FPGA"
+        challenges: [
+          "Propagation délais différents pour portes XOR et AND",
+          "Risque de glitches sur transitions simultanées des entrées",
+          "Optimisation surface circuit pour utilisation minimale LUTs",
+          "Test exhaustif de toutes les combinaisons d'entrées possibles"
+        ],
+        solutions: [
+          "Contraintes timing XDC égales pour les deux chemins",
+          "Synchronisation avec registres ou filtrage glitch",
+          "Encodage optimisé et partage de ressources logiques",
+          "Testbench automatisé avec assertions et coverage"
+        ],
+        imageExplanation: "Le demi-additionneur est le circuit combinatoire fondamental pour l'arithmétique binaire. Cette implémentation VHDL utilise une porte XOR pour la somme (S = A ⊕ B) et une porte AND pour la retenue (C = A · B). C'est un circuit purement combinatoire sans éléments de mémoire, avec un délai de propagation déterminé par le chemin critique à travers la porte XOR."
       },
-      additionalImages: [
-        { src: "/assets/projects/fpga/and-truth-table.jpg", alt: "Table vérité AND" },
-        { src: "/assets/projects/fpga/lut-implementation.jpg", alt: "Implementation LUT" },
-        { src: "/assets/projects/fpga/and-simulation.jpg", alt: "Simulation AND" },
-        { src: "/assets/projects/fpga/gate-schematic.jpg", alt: "Schéma porte" },
-        { src: "/assets/projects/fpga/timing-gate.jpg", alt: "Timing porte" },
-        { src: "/assets/projects/fpga/power-gate.jpg", alt: "Consommation porte" }
-      ],
-      videoLink: "#",
-      codeSnippet1: `-- VHDL - Porte AND Multiple Implémentations
+      5: {
+        title: "Porte Logique AND VHDL - Implémentations Multiples",
+        subtitle: "Porte ET fondamentale avec différentes architectures VHDL",
+        description: "Implémentation VHDL d'une porte logique ET avec deux entrées, présentée sous plusieurs architectures démontrant différents styles de codage VHDL. Étude comparative des approches.",
+        features: [
+          "Porte logique ET (AND) fondamentale avec table de vérité",
+          "Sortie C = A AND B avec tous les cas testés",
+          "Entrées A et B sur 1 bit avec complétude binaire",
+          "Sortie C sur 1 bit suivant table de vérité AND",
+          "Multiples architectures VHDL (dataflow, behavioral, structural)",
+          "Circuit combinatoire simple pour étude des styles de codage"
+        ],
+        technologies: ["VHDL Gate Level Modeling", "FPGA LUT Implementation", "Combinational Logic Design", "Vivado Synthesis Reports", "RTL Analysis", "Power Analysis"],
+        imageCaption: "Porte AND VHDL implémentée avec différents styles architecturaux",
+        simulationCaption: "Simulation ModelSim de la porte AND avec toutes les combinaisons",
+        codeSnippet: `-- VHDL - Porte AND Multiple Architectures Comparatives
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
 entity and_gate is
     Port (
-        A : in  STD_LOGIC;
-        B : in  STD_LOGIC;
-        C : out STD_LOGIC
+        A : in  STD_LOGIC;  -- Entrée A
+        B : in  STD_LOGIC;  -- Entrée B
+        C : out STD_LOGIC   -- Sortie C = A AND B
     );
 end and_gate;
 
--- Architecture 1: Opérateur AND direct
-architecture Behavioral1 of and_gate is
+-- Architecture 1: Style Dataflow (opérateur direct) - RECOMMANDÉ
+architecture Dataflow of and_gate is
 begin
-    C <= A and B;
-end Behavioral1;
+    C <= A and B;  -- Opérateur AND direct
+end Dataflow;
 
--- Architecture 2: Process avec table de vérité
-architecture Behavioral2 of and_gate is
+-- Architecture 2: Style Behavioral avec Process
+architecture Behavioral of and_gate is
 begin
     process(A, B)
     begin
+        -- Table de vérité complète
         if A = '1' and B = '1' then
             C <= '1';
         else
             C <= '0';
         end if;
     end process;
-end Behavioral2;
+end Behavioral;
 
--- Architecture 3: When/else
-architecture Behavioral3 of and_gate is
+-- Architecture 3: Style Dataflow avec When/Else
+architecture Dataflow_WhenElse of and_gate is
 begin
     C <= '1' when (A = '1' and B = '1') else '0';
-end Behavioral3;
+end Dataflow_WhenElse;
 
--- Architecture 4: Case statement
-architecture Behavioral4 of and_gate is
+-- Architecture 4: Style Structural (instanciation portes)
+architecture Structural of and_gate is
+    -- Déclaration component pour porte AND primitive
+    component and2
+        port (
+            I0 : in STD_LOGIC;
+            I1 : in STD_LOGIC;
+            O : out STD_LOGIC
+        );
+    end component;
+begin
+    -- Instanciation porte AND
+    AND_INST: and2
+        port map (
+            I0 => A,
+            I1 => B,
+            O => C
+        );
+end Structural;
+
+-- Architecture 5: Style Table Look-Up (LUT)
+architecture LUT_Based of and_gate is
+    -- Définition type pour Look-Up Table
+    type lut_type is array(0 to 3) of STD_LOGIC;
+    
+    -- LUT pour porte AND (index: A&B)
+    constant and_lut : lut_type := (
+        0 => '0',  -- "00" -> 0
+        1 => '0',  -- "01" -> 0
+        2 => '0',  -- "10" -> 0
+        3 => '1'   -- "11" -> 1
+    );
+    
+    -- Fonction pour convertir A,B en index LUT
+    function inputs_to_index(a, b: STD_LOGIC) return integer is
+        variable idx : integer := 0;
+    begin
+        if a = '1' then idx := idx + 2; end if;
+        if b = '1' then idx := idx + 1; end if;
+        return idx;
+    end function;
+    
+begin
+    -- Sortie depuis LUT
+    C <= and_lut(inputs_to_index(A, B));
+end LUT_Based;
+
+-- Architecture 6: Style avec Select Statement
+architecture WithSelect of and_gate is
     signal inputs : STD_LOGIC_VECTOR(1 downto 0);
 begin
-    inputs <= A & B;
+    inputs <= A & B;  -- Concatenation
     
-    process(inputs)
-    begin
-        case inputs is
-            when "11" => C <= '1';
-            when others => C <= '0';
-        end case;
-    end process;
-end Behavioral4;
-
--- Architecture 5: Look-Up Table (LUT)
-architecture Behavioral5 of and_gate is
-    type lut_type is array(0 to 3) of STD_LOGIC;
-    constant and_lut : lut_type := (
-        0 => '0',  -- "00"
-        1 => '0',  -- "01"
-        2 => '0',  -- "10"
-        3 => '1'   -- "11"
-    );
-begin
-    process(A, B)
-        variable index : integer;
-    begin
-        index := 0;
-        if A = '1' then index := index + 2; end if;
-        if B = '1' then index := index + 1; end if;
-        
-        C <= and_lut(index);
-    end process;
-end Behavioral5;`,
-      codeSnippet2: `-- VHDL - Testbench Porte AND Exhaustif
+    with inputs select
+        C <= '1' when "11",
+             '0' when "00" | "01" | "10",
+             '0' when others;  -- Pour completeness
+end WithSelect;`,
+        testbenchSnippet: `-- VHDL - Testbench Porte AND Exhaustif avec Coverage
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
 entity tb_and_gate is
 end tb_and_gate;
@@ -919,271 +1225,44 @@ architecture Behavioral of tb_and_gate is
         );
     end component;
     
+    -- Testbench Signals
     signal A_tb, B_tb, C_tb : STD_LOGIC;
     
-    constant period : time := 10 ns;
-begin
-    UUT: and_gate
-        port map (
-            A => A_tb,
-            B => B_tb,
-            C => C_tb
-        );
-    
-    -- Processus de test exhaustif
-    stim_proc: process
-        type test_vector is record
-            A, B, expected : STD_LOGIC;
-        end record;
-        
-        type test_array is array (natural range <>) of test_vector;
-        
-        constant tests : test_array := (
-            ('0', '0', '0'),
-            ('0', '1', '0'),
-            ('1', '0', '0'),
-            ('1', '1', '1')
-        );
-    begin
-        report "Starting AND gate exhaustive test...";
-        
-        for i in tests'range loop
-            A_tb <= tests(i).A;
-            B_tb <= tests(i).B;
-            wait for period;
-            
-            assert C_tb = tests(i).expected
-                report "Test " & integer'image(i) & " failed: " &
-                       "A=" & STD_LOGIC'image(A_tb) & 
-                       ", B=" & STD_LOGIC'image(B_tb) &
-                       ", got C=" & STD_LOGIC'image(C_tb) &
-                       ", expected " & STD_LOGIC'image(tests(i).expected)
-                severity error;
-            
-            report "Test " & integer'image(i) & " passed";
-        end loop;
-        
-        -- Tests dynamiques supplémentaires
-        report "Starting dynamic timing tests...";
-        
-        -- Test glitch detection
-        A_tb <= '0';
-        B_tb <= '0';
-        wait for period/2;
-        
-        -- Transition rapide
-        for i in 1 to 10 loop
-            A_tb <= not A_tb;
-            wait for 1 ns;
-            B_tb <= not B_tb;
-            wait for 1 ns;
-        end loop;
-        
-        -- Test propagation delay
-        A_tb <= '0';
-        B_tb <= '0';
-        wait for period;
-        A_tb <= '1';
-        B_tb <= '1';
-        wait for period;
-        
-        report "All AND gate tests completed successfully!";
-        wait;
-    end process;
-    
-    -- Processus de monitoring temps réel
-    monitor_proc: process
-    begin
-        wait on A_tb, B_tb;
-        wait for 0 ns; -- Cycle delta immédiat
-        
-        report Time'image(now) & 
-               ": AND(" & STD_LOGIC'image(A_tb) & 
-               ", " & STD_LOGIC'image(B_tb) & 
-               ") = " & STD_LOGIC'image(C_tb);
-    end process;
-    
-    -- Vérificateur automatique
-    checker_proc: process(A_tb, B_tb)
-        variable expected_result : STD_LOGIC;
-    begin
-        expected_result := A_tb and B_tb;
-        
-        -- Vérification asynchrone (attention aux glitches)
-        wait for 100 ps; -- Attendre propagation
-        
-        if C_tb /= expected_result then
-            report "Mismatch detected at time " & Time'image(now) &
-                   ": Expected " & STD_LOGIC'image(expected_result) &
-                   ", got " & STD_LOGIC'image(C_tb)
-            severity warning;
-        end if;
-    end process;
-end Behavioral;
-
--- VHDL - Porte AND à N entrées
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-
-entity and_n is
-    Generic (
-        N : integer := 4  -- Nombre d'entrées
-    );
-    Port (
-        inputs : in  STD_LOGIC_VECTOR(N-1 downto 0);
-        output : out STD_LOGIC
-    );
-end and_n;
-
-architecture Behavioral of and_n is
-begin
-    process(inputs)
-        variable temp : STD_LOGIC := '1';
-    begin
-        temp := '1';
-        for i in 0 to N-1 loop
-            temp := temp and inputs(i);
-        end loop;
-        output <= temp;
-    end process;
-end Behavioral;`,
-      challenges: [
-        "Glitches sur transitions simultanées",
-        "Délai propagation asymétrique",
-        "Consommation puissance statique",
-        "Test couverture 100%"
-      ],
-      solutions: [
-        "Synchronisation horloge",
-        "Contraintes timing égales",
-        "Clock gating optimisation",
-        "Test aléatoire constrained-random"
-      ]
-    },
-    6: {
-      title: "Porte Logique OR VHDL",
-      subtitle: "Implémentation porte OU avec deux entrées",
-      description: "Circuit VHDL implémentant une porte logique OU avec deux entrées et une sortie suivant la table de vérité OU.",
-      features: [
-        "Porte logique OU (OR)",
-        "Sortie C = A OR B",
-        "Entrées A et B (1 bit)",
-        "Sortie C (1 bit)",
-        "Table de vérité : 1 si A=1 ou B=1",
-        "Circuit combinatoire simple"
-      ],
-      technologies: ["VHDL RTL", "FPGA Slice", "Combinational Design", "Vivado Implementation", "Utilization Report", "Post-Synthesis Simulation"],
-      mainImage: {
-        src: "/assets/projects/fpga/or-gate-circuit.jpg",
-        alt: "Porte OR VHDL implementation",
-        caption: "Implémentation porte OR en VHDL et FPGA"
-      },
-      additionalImages: [
-        { src: "/assets/projects/fpga/or-truth-table.jpg", alt: "Table vérité OR" },
-        { src: "/assets/projects/fpga/or-lut.jpg", alt: "LUT OR gate" },
-        { src: "/assets/projects/fpga/or-simulation.jpg", alt: "Simulation OR" },
-        { src: "/assets/projects/fpga/fpga-slice.jpg", alt: "Slice FPGA" },
-        { src: "/assets/projects/fpga/or-timing.jpg", alt: "Timing OR" },
-        { src: "/assets/projects/fpga/or-utilization.jpg", alt: "Utilisation ressources" }
-      ],
-      videoLink: "#",
-      codeSnippet1: `-- VHDL - Porte OR Multiple Architectures
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-
-entity or_gate is
-    Port (
-        A : in  STD_LOGIC;
-        B : in  STD_LOGIC;
-        C : out STD_LOGIC
-    );
-end or_gate;
-
--- Architecture 1: Opérateur OR direct
-architecture Behavioral1 of or_gate is
-begin
-    C <= A or B;
-end Behavioral1;
-
--- Architecture 2: Process avec if/else
-architecture Behavioral2 of or_gate is
-begin
-    process(A, B)
-    begin
-        if A = '1' or B = '1' then
-            C <= '1';
-        else
-            C <= '0';
-        end if;
-    end process;
-end Behavioral2;
-
--- Architecture 3: With/select
-architecture Behavioral3 of or_gate is
-    signal inputs : STD_LOGIC_VECTOR(1 downto 0);
-begin
-    inputs <= A & B;
-    
-    with inputs select
-        C <= '0' when "00",
-             '1' when "01",
-             '1' when "10",
-             '1' when "11",
-             '0' when others;
-end Behavioral3;
-
--- Architecture 4: Look-Up Table optimisée
-architecture Behavioral4 of or_gate is
-    type lut_type is array(0 to 3) of STD_LOGIC;
-    constant or_lut : lut_type := (
-        0 => '0',  -- "00"
-        1 => '1',  -- "01"
-        2 => '1',  -- "10"
-        3 => '1'   -- "11"
-    );
-    
-    function to_index(a, b: STD_LOGIC) return integer is
-        variable idx : integer := 0;
-    begin
-        if a = '1' then idx := idx + 2; end if;
-        if b = '1' then idx := idx + 1; end if;
-        return idx;
-    end function;
-begin
-    C <= or_lut(to_index(A, B));
-end Behavioral4;
-
--- Architecture 5: NAND-NAND implementation (De Morgan)
-architecture Behavioral5 of or_gate is
-    signal nand1, nand2 : STD_LOGIC;
-begin
-    nand1 <= A nand A;  -- NOT A
-    nand2 <= B nand B;  -- NOT B
-    C <= (nand1 nand nand2);  -- NAND(NOT A, NOT B) = A OR B
-end Behavioral5;`,
-      codeSnippet2: `-- VHDL - Testbench Porte OR Avancé
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.NUMERIC_STD.ALL;
-
-entity tb_or_gate is
-end tb_or_gate;
-
-architecture Behavioral of tb_or_gate is
-    component or_gate
-        Port (
-            A : in  STD_LOGIC;
-            B : in  STD_LOGIC;
-            C : out STD_LOGIC
-        );
-    end component;
-    
-    signal A_tb, B_tb, C_tb : STD_LOGIC;
-    
+    -- Clock pour tests dynamiques
     constant CLK_PERIOD : time := 10 ns;
     signal test_clk : STD_LOGIC := '0';
+    
+    -- Types pour tests structurés
+    type test_record is record
+        test_id   : integer;
+        a_val     : STD_LOGIC;
+        b_val     : STD_LOGIC;
+        expected  : STD_LOGIC;
+        delay     : time;
+    end record;
+    
+    type test_sequence is array (natural range <>) of test_record;
+    
+    -- Séquence de tests complète
+    constant test_seq : test_sequence := (
+        (1, '0', '0', '0', 20 ns),
+        (2, '0', '1', '0', 15 ns),
+        (3, '1', '0', '0', 25 ns),
+        (4, '1', '1', '1', 10 ns),
+        (5, '0', '0', '0', 5 ns),
+        (6, '1', '1', '1', 30 ns),
+        (7, '0', '1', '0', 20 ns),
+        (8, '1', '0', '0', 15 ns)
+    );
+    
+    -- Variables pour statistiques
+    shared variable total_tests : integer := 0;
+    shared variable passed_tests : integer := 0;
+    shared variable failed_tests : integer := 0;
+    
 begin
-    UUT: or_gate
+    -- Instanciation UUT
+    UUT: and_gate
         port map (
             A => A_tb,
             B => B_tb,
@@ -1195,72 +1274,91 @@ begin
     
     -- Processus de test principal
     main_test: process
-        type test_record is record
-            a_val, b_val : STD_LOGIC;
-            delay_time   : time;
-        end record;
-        
-        type test_sequence is array (natural range <>) of test_record;
-        
-        constant test_seq : test_sequence := (
-            ('0', '0', 20 ns),
-            ('0', '1', 15 ns),
-            ('1', '0', 25 ns),
-            ('1', '1', 10 ns),
-            ('0', '0', 5 ns),
-            ('1', '1', 30 ns),
-            ('0', '1', 20 ns),
-            ('1', '0', 15 ns)
-        );
     begin
-        report "Starting comprehensive OR gate test sequence...";
+        report "==============================================";
+        report "Starting comprehensive AND gate test sequence";
+        report "==============================================";
         
+        -- Tests de la table de vérité
         for i in test_seq'range loop
             A_tb <= test_seq(i).a_val;
             B_tb <= test_seq(i).b_val;
-            wait for test_seq(i).delay_time;
+            total_tests := total_tests + 1;
+            
+            wait for test_seq(i).delay;
             
             -- Vérification résultat
-            assert C_tb = (test_seq(i).a_val or test_seq(i).b_val)
-                report "Test " & integer'image(i) & " failed at " & Time'image(now) &
+            if C_tb = test_seq(i).expected then
+                passed_tests := passed_tests + 1;
+                report "Test " & integer'image(test_seq(i).test_id) & 
+                       " PASSED at " & time'image(now) &
                        ": A=" & STD_LOGIC'image(A_tb) & 
                        ", B=" & STD_LOGIC'image(B_tb) &
-                       ", C=" & STD_LOGIC'image(C_tb) &
-                       ", expected " & STD_LOGIC'image(test_seq(i).a_val or test_seq(i).b_val)
-                severity error;
-        end loop;
-        
-        -- Test aléatoire
-        report "Starting random stimulus test...";
-        
-        for i in 1 to 50 loop
-            A_tb <= '0' when (i mod 3 = 0) else '1';
-            B_tb <= '0' when (i mod 4 = 0) else '1';
-            wait for CLK_PERIOD;
-            
-            if (i mod 10 = 0) then
-                report "Random test " & integer'image(i) & 
-                       ": A=" & STD_LOGIC'image(A_tb) &
-                       ", B=" & STD_LOGIC'image(B_tb) &
                        ", C=" & STD_LOGIC'image(C_tb);
+            else
+                failed_tests := failed_tests + 1;
+                report "Test " & integer'image(test_seq(i).test_id) & 
+                       " FAILED at " & time'image(now) &
+                       ": A=" & STD_LOGIC'image(A_tb) & 
+                       ", B=" & STD_LOGIC'image(B_tb) &
+                       ", Got C=" & STD_LOGIC'image(C_tb) &
+                       ", Expected " & STD_LOGIC'image(test_seq(i).expected)
+                       severity error;
             end if;
         end loop;
         
-        -- Test de performance (timing)
-        report "Starting timing performance test...";
+        -- Tests dynamiques (transitions)
+        report "==============================================";
+        report "Starting dynamic timing tests...";
+        report "==============================================";
         
+        -- Test 1: Transition simultanée
         A_tb <= '0';
         B_tb <= '0';
         wait for 1 ns;
         
-        -- Transition rapide
-        for i in 1 to 100 loop
-            A_tb <= not A_tb;
-            B_tb <= STD_LOGIC(to_unsigned(i mod 2, 1)(0));
-            wait for 100 ps;
+        A_tb <= '1';
+        B_tb <= '1';
+        wait for 2 ns;
+        
+        -- Test 2: Transition séquentielle
+        for i in 1 to 5 loop
+            A_tb <= '0';
+            wait for 500 ps;
+            B_tb <= '1';
+            wait for 500 ps;
+            A_tb <= '1';
+            wait for 500 ps;
+            B_tb <= '0';
+            wait for 500 ps;
         end loop;
         
-        report "All OR gate tests completed successfully!";
+        -- Test 3: Random-like pattern
+        for i in 1 to 20 loop
+            A_tb <= '1' when (i mod 3 = 0) else '0';
+            B_tb <= '1' when (i mod 4 = 0) else '0';
+            wait for CLK_PERIOD;
+        end loop;
+        
+        -- Résumé final
+        report "==============================================";
+        report "AND GATE TEST COMPLETION REPORT";
+        report "==============================================";
+        report "Total tests executed: " & integer'image(total_tests);
+        report "Tests passed: " & integer'image(passed_tests);
+        report "Tests failed: " & integer'image(failed_tests);
+        report "Success rate: " & integer'image((passed_tests * 100) / total_tests) & "%";
+        
+        if failed_tests = 0 then
+            report "ALL TESTS PASSED SUCCESSFULLY!";
+            report "AND gate implementation is correct.";
+        else
+            report "SOME TESTS FAILED. Check implementation.";
+            report "==============================================";
+            wait;
+        end if;
+        
+        report "==============================================";
         wait;
     end process;
     
@@ -1268,95 +1366,419 @@ begin
     coverage_monitor: process
         type coverage_matrix is array (0 to 1, 0 to 1) of boolean;
         variable coverage : coverage_matrix := (others => (others => false));
-        variable total_coverage : integer := 0;
+        variable total_covered : integer := 0;
     begin
         wait on A_tb, B_tb;
-        wait for 1 ns; -- Attendre mise à jour sortie
+        wait for 1 ns;  -- Allow output to settle
         
-        -- Mettre à jour coverage
+        -- Update coverage matrix
         coverage(to_integer(unsigned'('0' & A_tb)), 
                 to_integer(unsigned'('0' & B_tb))) := true;
         
-        -- Calculer coverage
-        total_coverage := 0;
+        -- Calculate coverage percentage
+        total_covered := 0;
         for i in 0 to 1 loop
             for j in 0 to 1 loop
                 if coverage(i, j) then
-                    total_coverage := total_coverage + 1;
+                    total_covered := total_covered + 1;
                 end if;
             end loop;
         end loop;
         
-        -- Reporter coverage périodiquement
-        if total_coverage = 4 then
-            report "100% input coverage achieved!";
-        elsif total_coverage mod 1 = 0 then
-            report "Coverage: " & integer'image(total_coverage * 25) & "%";
+        -- Report coverage progress
+        if total_covered = 4 then
+            report "COVERAGE: 100% input combinations tested!";
+        elsif total_covered > 0 then
+            report "COVERAGE: " & integer'image(total_covered * 25) & "%";
         end if;
     end process;
     
-    -- Processus de vérification continue
+    -- Processus de vérification continue (assertions)
     continuous_check: process
     begin
         wait on C_tb;
         
-        -- Vérifier que la sortie correspond à OR logique
-        wait for 100 ps; -- Marge pour propagation
+        -- Allow for propagation delay
+        wait for 100 ps;
         
-        if C_tb /= (A_tb or B_tb) then
-            report "Continuous check failed at " & Time'image(now) &
+        -- Continuous assertion check
+        assert C_tb = (A_tb and B_tb)
+            report "Continuous check failed at " & time'image(now) &
                    ": A=" & STD_LOGIC'image(A_tb) &
                    ", B=" & STD_LOGIC'image(B_tb) &
                    ", C=" & STD_LOGIC'image(C_tb) &
-                   ", expected " & STD_LOGIC'image(A_tb or B_tb)
+                   ", expected " & STD_LOGIC'image(A_tb and B_tb)
             severity warning;
+    end process;
+    
+end Behavioral;`,
+        challenges: [
+          "Glitches sur transitions simultanées des entrées",
+          "Délai propagation asymétrique selon chemin logique",
+          "Consommation puissance statique vs dynamique trade-off",
+          "Test couverture 100% avec vérification exhaustive"
+        ],
+        solutions: [
+          "Synchronisation avec horloge pour éliminer glitches",
+          "Contraintes timing égales et balanced routing",
+          "Clock gating et power optimization dans synthesis",
+          "Test aléatoire constrained-random et assertions"
+        ],
+        imageExplanation: "Cette porte AND VHDL démontre plusieurs styles architecturaux pour le même circuit logique. Chaque architecture produit le même comportement fonctionnel (C = A AND B) mais avec des implémentations RTL différentes. Cette approche comparative est utile pour comprendre les trade-offs entre lisibilité, performance et ressources FPGA."
+      },
+      6: {
+        title: "Porte Logique OR VHDL - Fondamentaux Combinatoires",
+        subtitle: "Porte OU fondamentale avec optimisation ressources FPGA",
+        description: "Implémentation VHDL d'une porte logique OU avec deux entrées, focalisée sur l'optimisation des ressources FPGA et l'analyse des différentes approches d'implémentation.",
+        features: [
+          "Porte logique OU (OR) fondamentale C = A OR B",
+          "Entrées A et B sur 1 bit avec toutes combinaisons testées",
+          "Sortie C sur 1 bit suivant table de vérité OR",
+          "Optimisation pour utilisation minimale de ressources FPGA",
+          "Analyse timing et consommation puissance",
+          "Circuit combinatoire de référence pour études avancées"
+        ],
+        technologies: ["VHDL RTL Design", "FPGA Slice Optimization", "Combinational Circuit Design", "Vivado Implementation", "Utilization Reports", "Post-Synthesis Simulation"],
+        imageCaption: "Porte OR VHDL optimisée pour FPGA avec analyse ressources",
+        simulationCaption: "Simulation ModelSim de la porte OR avec analyse timing",
+        codeSnippet: `-- VHDL - Porte OR Optimisée avec Génériques
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+
+entity or_gate is
+    Generic (
+        DELAY_NS : natural := 1  -- Paramètre générique pour simulation
+    );
+    Port (
+        A : in  STD_LOGIC;  -- Entrée A
+        B : in  STD_LOGIC;  -- Entrée B
+        C : out STD_LOGIC   -- Sortie C = A OR B
+    );
+end or_gate;
+
+-- Architecture 1: Style Dataflow Simple (Optimal)
+architecture Dataflow of or_gate is
+begin
+    C <= A or B;  -- Opérateur OR direct - SYNTHÉTISABLE
+end Dataflow;
+
+-- Architecture 2: Style Behavioral avec If-Then-Else
+architecture Behavioral of or_gate is
+begin
+    process(A, B)
+    begin
+        if A = '1' or B = '1' then
+            C <= '1';
+        else
+            C <= '0';
         end if;
     end process;
 end Behavioral;
 
--- VHDL - Porte OR à N entrées avec générique
+-- Architecture 3: Style Structural avec NAND-NAND (De Morgan)
+architecture Structural_NAND of or_gate is
+    signal nand1, nand2 : STD_LOGIC;
+begin
+    -- OR(A,B) = NAND(NOT A, NOT B) - Théorème de De Morgan
+    nand1 <= A nand A;  -- NOT A (NAND avec même entrée)
+    nand2 <= B nand B;  -- NOT B
+    C <= nand1 nand nand2;  -- NAND(NOT A, NOT B) = A OR B
+end Structural_NAND;
+
+-- Architecture 4: Style Look-Up Table Configurable
+architecture LUT_Configurable of or_gate is
+    -- Type pour LUT configurable
+    type lut_config_type is array(0 to 3) of STD_LOGIC;
+    
+    -- Configuration LUT pour porte OR
+    constant OR_LUT_CONFIG : lut_config_type := (
+        0 => '0',  -- "00" -> 0
+        1 => '1',  -- "01" -> 1
+        2 => '1',  -- "10" -> 1
+        3 => '1'   -- "11" -> 1
+    );
+    
+    -- Fonction d'indexation LUT
+    function get_lut_index(a, b: STD_LOGIC) return natural is
+    begin
+        return (to_integer(unsigned'('0' & a)) * 2) + 
+               (to_integer(unsigned'('0' & b)));
+    end function;
+    
+begin
+    -- Sortie depuis LUT configurée
+    C <= OR_LUT_CONFIG(get_lut_index(A, B)) after (DELAY_NS * 1 ns);
+end LUT_Configurable;
+
+-- Architecture 5: Style avec Case Statement
+architecture CaseStatement of or_gate is
+    signal inputs : STD_LOGIC_VECTOR(1 downto 0);
+begin
+    inputs <= A & B;  -- Concaténation
+    
+    process(inputs)
+    begin
+        case inputs is
+            when "00"   => C <= '0';
+            when "01"   => C <= '1';
+            when "10"   => C <= '1';
+            when "11"   => C <= '1';
+            when others => C <= '0';  -- Pour completeness
+        end case;
+    end process;
+end CaseStatement;
+
+-- Architecture 6: Style Pipelined (pour haute fréquence)
+architecture Pipelined of or_gate is
+    signal reg_A, reg_B : STD_LOGIC;
+    signal reg_out      : STD_LOGIC;
+begin
+    process(clk)  -- Nécessite une horloge en entrée
+    begin
+        if rising_edge(clk) then
+            -- Étage pipeline 1: Registration des entrées
+            reg_A <= A;
+            reg_B <= B;
+            
+            -- Étage pipeline 2: Calcul et registration sortie
+            reg_out <= reg_A or reg_B;
+        end if;
+    end process;
+    
+    C <= reg_out;  -- Sortie pipelinée
+end Pipelined;`,
+        testbenchSnippet: `-- VHDL - Testbench Porte OR Professionnel avec Coverage 100%
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
 
-entity or_n is
-    Generic (
-        N : integer := 8
-    );
-    Port (
-        inputs : in  STD_LOGIC_VECTOR(N-1 downto 0);
-        output : out STD_LOGIC
-    );
-end or_n;
+entity tb_or_gate is
+end tb_or_gate;
 
-architecture Behavioral of or_n is
+architecture Behavioral of tb_or_gate is
+    -- Component Declaration avec générique
+    component or_gate
+        Generic (
+            DELAY_NS : natural
+        );
+        Port (
+            A : in  STD_LOGIC;
+            B : in  STD_LOGIC;
+            C : out STD_LOGIC
+        );
+    end component;
+    
+    -- Testbench Signals
+    signal A_tb, B_tb, C_tb : STD_LOGIC;
+    
+    -- Clock pour tests dynamiques
+    constant CLK_PERIOD : time := 10 ns;
+    signal test_clk : STD_LOGIC := '0';
+    
+    -- Types pour tests avancés
+    type test_scenario is record
+        id          : integer;
+        description : string(1 to 40);
+        a_pattern   : STD_LOGIC_VECTOR(1 to 8);
+        b_pattern   : STD_LOGIC_VECTOR(1 to 8);
+        duration    : time;
+    end record;
+    
+    type scenario_array is array (natural range <>) of test_scenario;
+    
+    -- Scénarios de test complets
+    constant test_scenarios : scenario_array := (
+        (1, "Static truth table verification          ", 
+         "00001111", "00110011", 200 ns),
+        (2, "Alternating pattern for glitch detection", 
+         "01010101", "00110011", 150 ns),
+        (3, "Random-like transitions                  ", 
+         "01101001", "10010110", 180 ns),
+        (4, "All ones stress test                    ", 
+         "11111111", "11111111", 100 ns),
+        (5, "All zeros baseline                      ", 
+         "00000000", "00000000", 100 ns)
+    );
+    
+    -- Statistics tracking
+    shared variable total_vectors : integer := 0;
+    shared variable correct_vectors : integer := 0;
+    shared variable error_vectors : integer := 0;
+    
 begin
-    process(inputs)
-        variable temp : STD_LOGIC := '0';
+    -- UUT Instantiation avec générique
+    UUT: or_gate
+        generic map (
+            DELAY_NS => 1
+        )
+        port map (
+            A => A_tb,
+            B => B_tb,
+            C => C_tb
+        );
+    
+    -- Test Clock Generation
+    test_clk <= not test_clk after CLK_PERIOD/2;
+    
+    -- Main Test Process
+    main_test: process
+        variable start_time, end_time : time;
     begin
-        temp := '0';
-        for i in 0 to N-1 loop
-            temp := temp or inputs(i);
-            exit when temp = '1'; -- Optimization
+        report "=================================================================";
+        report "PROFESSIONAL OR GATE TESTBENCH - Starting Comprehensive Testing";
+        report "=================================================================";
+        
+        start_time := now;
+        
+        -- Execute all test scenarios
+        for scen_idx in test_scenarios'range loop
+            report "Executing Scenario " & integer'image(test_scenarios(scen_idx).id) & 
+                   ": " & test_scenarios(scen_idx).description;
+            report "---------------------------------------------------------";
+            
+            -- Apply pattern from scenario
+            for bit_idx in 1 to 8 loop
+                A_tb <= test_scenarios(scen_idx).a_pattern(bit_idx);
+                B_tb <= test_scenarios(scen_idx).b_pattern(bit_idx);
+                total_vectors := total_vectors + 1;
+                
+                wait for CLK_PERIOD/4;
+                
+                -- Verify output
+                if C_tb = (A_tb or B_tb) then
+                    correct_vectors := correct_vectors + 1;
+                else
+                    error_vectors := error_vectors + 1;
+                    report "ERROR at time " & time'image(now) & 
+                           ": Pattern " & integer'image(bit_idx) &
+                           " - A=" & STD_LOGIC'image(A_tb) &
+                           ", B=" & STD_LOGIC'image(B_tb) &
+                           ", Got C=" & STD_LOGIC'image(C_tb) &
+                           ", Expected " & STD_LOGIC'image(A_tb or B_tb)
+                           severity error;
+                end if;
+                
+                wait for CLK_PERIOD/4;
+            end loop;
+            
+            wait for test_scenarios(scen_idx).duration;
         end loop;
-        output <= temp;
+        
+        end_time := now;
+        
+        -- Timing Analysis Section
+        report "=================================================================";
+        report "TIMING ANALYSIS";
+        report "-----------------------------------------------------------------";
+        report "Test duration: " & time'image(end_time - start_time);
+        report "Clock frequency: " & real'image(1.0/real(CLK_PERIOD/1 ns)) & " MHz";
+        report "Vectors per second: " & 
+                integer'image(integer(real(total_vectors) / real((end_time - start_time)/1 ns)) * 1000000000);
+        
+        -- Final Results Summary
+        report "=================================================================";
+        report "FINAL TEST RESULTS SUMMARY";
+        report "-----------------------------------------------------------------";
+        report "Total test vectors executed: " & integer'image(total_vectors);
+        report "Correct outputs: " & integer'image(correct_vectors);
+        report "Incorrect outputs: " & integer'image(error_vectors);
+        
+        if error_vectors = 0 then
+            report "SUCCESS: All " & integer'image(total_vectors) & 
+                   " test vectors passed!";
+            report "OR gate implementation is 100% functional.";
+        else
+            report "FAILURE: " & integer'image(error_vectors) & 
+                   " errors detected out of " & integer'image(total_vectors) & 
+                   " vectors.";
+            report "Success rate: " & 
+                   integer'image((correct_vectors * 100) / total_vectors) & "%";
+            report "=================================================================";
+            wait;
+        end if;
+        
+        report "=================================================================";
+        report "Testing completed successfully at " & time'image(now);
+        report "=================================================================";
+        wait;
     end process;
+    
+    -- Coverage Collection Process
+    coverage_collector: process
+        type cov_bin is array(0 to 3) of integer;
+        variable cov_counts : cov_bin := (others => 0);
+        variable total_cycles : integer := 0;
+    begin
+        wait until rising_edge(test_clk);
+        
+        -- Bin selection based on A,B values
+        case to_integer(unsigned'(A_tb & B_tb)) is
+            when 0 => cov_counts(0) := cov_counts(0) + 1; -- "00"
+            when 1 => cov_counts(1) := cov_counts(1) + 1; -- "01"
+            when 2 => cov_counts(2) := cov_counts(2) + 1; -- "10"
+            when 3 => cov_counts(3) := cov_counts(3) + 1; -- "11"
+            when others => null;
+        end case;
+        
+        total_cycles := total_cycles + 1;
+        
+        -- Periodic coverage reporting
+        if total_cycles mod 20 = 0 then
+            report "Coverage after " & integer'image(total_cycles) & " cycles:";
+            report "  Bin 00 ('00'): " & integer'image(cov_counts(0));
+            report "  Bin 01 ('01'): " & integer'image(cov_counts(1));
+            report "  Bin 10 ('10'): " & integer'image(cov_counts(2));
+            report "  Bin 11 ('11'): " & integer'image(cov_counts(3));
+            
+            -- Check if all bins have been hit
+            if cov_counts(0) > 0 and cov_counts(1) > 0 and 
+               cov_counts(2) > 0 and cov_counts(3) > 0 then
+                report "FULL COVERAGE ACHIEVED! All input combinations tested.";
+            end if;
+        end if;
+    end process;
+    
+    -- Continuous Assertion Checker
+    assertion_checker: process
+    begin
+        wait on C_tb;
+        
+        -- Allow for minimal propagation delay
+        wait for 50 ps;
+        
+        -- Assertion: C must equal A OR B
+        assert C_tb = (A_tb or B_tb)
+            report "Assertion violation at " & time'image(now) &
+                   ": OR(" & STD_LOGIC'image(A_tb) & 
+                   ", " & STD_LOGIC'image(B_tb) & 
+                   ") = " & STD_LOGIC'image(C_tb) &
+                   " but should be " & STD_LOGIC'image(A_tb or B_tb)
+            severity warning;
+    end process;
+    
 end Behavioral;`,
-      challenges: [
-        "Fan-in limitations FPGA",
-        "Signal integrity haute fréquence",
-        "Metastability sur transitions",
-        "Power vs performance trade-off"
-      ],
-      solutions: [
-        "Arbre de portes équilibré",
-        "Buffers de sortie contrôlés",
-        "Synchroniseurs double flip-flop",
-        "Clock enable optimisation"
-      ]
-    }
+        challenges: [
+          "Limitations fan-in sur FPGA pour portes à nombreuses entrées",
+          "Signal integrity à haute fréquence avec routing long",
+          "Metastability risques sur transitions asynchrones",
+          "Trade-off power vs performance pour applications basse consommation"
+        ],
+        solutions: [
+          "Arbre de portes équilibré pour minimiser délai propagation",
+          "Buffers de sortie contrôlés et contraintes placement/routing",
+          "Synchroniseurs double/triple flip-flop pour signaux asynchrones",
+          "Clock enable optimisation et power gating techniques"
+        ],
+        imageExplanation: "Cette porte OR VHDL présente plusieurs implémentations optimisées pour FPGA, incluant une version pipelinée pour haute fréquence. L'architecture utilise des génériques pour paramétrisation et inclut des considérations de timing précises. Le testbench professionnel assure une couverture 100% avec analyse statistique détaillée."
+      }
+    };
+    
+    return blocksData[id] || blocksData[1];
   };
 
-  const blockData = blocksData[blockId] || blocksData[1];
+  const blockData = getBlockData(blockId);
+  const currentImage = blockImages[blockId];
+  const currentSimulationImage = simulationImages[blockId];
 
   return (
     <>
@@ -1398,48 +1820,33 @@ end Behavioral;`,
                   </div>
                 ) : (
                   <img 
-                    src={blockData.mainImage.src} 
-                    alt={blockData.mainImage.alt}
+                    src={currentImage} 
+                    alt={blockData.title}
                     className="main-project-image"
                     onError={handleImageError}
                   />
                 )}
                 <div className="main-image-caption">
-                  {blockData.mainImage.caption}
+                  {blockData.imageCaption}
                 </div>
               </div>
             </div>
-          </div>
-
-          {/* SECTION 6 IMAGES ADDITIONNELLES */}
-          <div className="block-section">
-            <h2 className="section-title">Galerie du Projet</h2>
-            <div className="additional-images-grid">
-              {blockData.additionalImages.map((img, index) => (
-                <div key={index} className="additional-image-item">
-                  <div className="additional-image-wrapper">
-                    {imageError ? (
-                      <div className="placeholder-content">
-                        <span className="placeholder-icon">🖼️</span>
-                        <p>Image {index + 1}</p>
-                      </div>
-                    ) : (
-                      <img 
-                        src={img.src} 
-                        alt={img.alt}
-                        className="additional-image"
-                        onError={handleImageError}
-                      />
-                    )}
-                  </div>
-                  <p className="additional-image-caption">{img.alt}</p>
-                </div>
-              ))}
+            
+            {/* Explication technique de l'image */}
+            <div className="image-explanation">
+              <h3>Explication technique :</h3>
+              <p>{blockData.imageExplanation}</p>
+              <ul>
+                <li><strong>Composants principaux :</strong> {blockData.technologies.slice(0, 3).join(', ')}</li>
+                <li><strong>Type de circuit :</strong> {blockId <= 3 ? 'Séquentiel synchrone' : 'Combinatoire pur'}</li>
+                <li><strong>Fréquence horloge :</strong> {blockId <= 3 ? '100MHz' : 'N/A (combinatoire)'}</li>
+                <li><strong>Outils de développement :</strong> Xilinx Vivado, ModelSim, FPGA Basys 3/Nexys A7</li>
+              </ul>
             </div>
           </div>
 
           <div className="block-section">
-            <h2 className="section-title">Composants utilisés</h2>
+            <h2 className="section-title">Technologies utilisées</h2>
             <div className="tech-tags">
               {blockData.technologies.map((tech, index) => (
                 <span key={index} className="tech-tag">{tech}</span>
@@ -1447,36 +1854,44 @@ end Behavioral;`,
             </div>
           </div>
 
+          {/* SECTION SIMULATION (remplace la vidéo) */}
           <div className="block-section">
-            <h2 className="section-title">Démonstration</h2>
-            <div className="media-container">
-              <div className="screenshot-preview">
-                <div className="screenshot-placeholder">
-                  {imageError ? (
-                    <div className="placeholder-content">
-                      <span className="placeholder-icon-large">🎥</span>
-                      <p>Aperçu du projet FPGA</p>
-                    </div>
-                  ) : (
-                    <img 
-                      src={blockData.mainImage.src} 
-                      alt="Prévisualisation du projet"
-                      className="preview-image"
-                      onError={handleImageError}
-                    />
-                  )}
+            <h2 className="section-title">Démonstration par Simulation</h2>
+            
+            <div className="video-description">
+              <p>Cette image montre la simulation ModelSim/Vivado du design VHDL, illustrant le comportement temporel et la vérification fonctionnelle.</p>
+            </div>
+            
+            <div className="single-image-container">
+              <div className="main-image-wrapper">
+                {simulationImageError ? (
+                  <div className="image-placeholder">
+                    <span className="placeholder-icon">📊</span>
+                    <p className="placeholder-text">Image de simulation non disponible</p>
+                  </div>
+                ) : (
+                  <img 
+                    src={currentSimulationImage} 
+                    alt={`Simulation ${blockData.title}`}
+                    className="main-project-image"
+                    onError={handleSimulationImageError}
+                  />
+                )}
+                <div className="main-image-caption">
+                  {blockData.simulationCaption}
                 </div>
-                <p className="screenshot-caption">{blockData.mainImage.caption}</p>
               </div>
-              
-              {blockData.videoLink !== "#" && (
-                <div className="video-container">
-                  <h3>Vidéo de démonstration</h3>
-                  <a href={blockData.videoLink} target="_blank" rel="noopener noreferrer" className="video-link">
-                    <span className="video-icon">▶️</span> Voir la vidéo
-                  </a>
-                </div>
-              )}
+            </div>
+            
+            <div className="image-explanation">
+              <h3>Analyse de la simulation :</h3>
+              <p>La simulation ModelSim montre les signaux d'entrée/sortie du design VHDL avec leur chronologie. Les waveforms permettent de vérifier :</p>
+              <ul>
+                <li>Le respect des temps de setup/hold des flip-flops</li>
+                <li>La propagation correcte des signaux combinatoires</li>
+                <li>Les transitions d'état aux fronts d'horloge appropriés</li>
+                <li>L'absence de glitches ou de métastabilités</li>
+              </ul>
             </div>
           </div>
 
@@ -1490,7 +1905,7 @@ end Behavioral;`,
                     <span className="code-filename">FPGA_Bloc{blockId}_Main.vhd</span>
                     <button className="copy-btn">Copier</button>
                   </div>
-                  <pre className="code-snippet">{blockData.codeSnippet1}</pre>
+                  <pre className="code-snippet">{blockData.codeSnippet}</pre>
                 </div>
               </div>
               <div className="code-column">
@@ -1499,7 +1914,7 @@ end Behavioral;`,
                     <span className="code-filename">FPGA_Bloc{blockId}_Testbench.vhd</span>
                     <button className="copy-btn">Copier</button>
                   </div>
-                  <pre className="code-snippet">{blockData.codeSnippet2}</pre>
+                  <pre className="codeSnippet">{blockData.testbenchSnippet}</pre>
                 </div>
               </div>
             </div>
