@@ -1,4 +1,4 @@
-/* components/Navbar.css - PLEINE LARGEUR */
+/* components/Navbar.css - MODIFIÉ avec "Welcome" */
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 .navbar {
@@ -32,44 +32,38 @@
 
 .logo-top {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
 }
 
-.logo-reliable {
-  font-size: 2rem;
+.logo-welcome {
+  font-size: 2.5rem;
   font-weight: 400;
   color: var(--color5);
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  position: relative;
+  padding-bottom: 5px;
 }
 
-.logo-it {
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--color5);
-  letter-spacing: 1px;
+.logo-welcome:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    var(--color4) 0%, 
+    var(--color5) 50%, 
+    var(--color4) 100%);
+  border-radius: 2px;
 }
 
-.logo-bottom {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-  margin-top: 5px;
-}
-
-.logo-startale {
-  font-size: 1.8rem;
-  font-weight: 400;
-  color: var(--color5);
-  letter-spacing: 1.5px;
-}
-
-.logo-solutions {
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--color5);
-  letter-spacing: 1.5px;
-  opacity: 0.9;
+/* Animation au survol */
+.logo-welcome:hover {
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
 }
 
 .nav-menu {
@@ -89,6 +83,7 @@
   position: relative;
   transition: var(--transition);
   letter-spacing: 1px;
+  text-decoration: none;
 }
 
 .nav-link:hover {
@@ -127,19 +122,23 @@
     font-size: 1.2rem;
   }
   
-  .logo-reliable {
-    font-size: 1.6rem;
+  .logo-welcome {
+    font-size: 2rem;
+    letter-spacing: 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo-welcome {
+    font-size: 1.8rem;
+    letter-spacing: 1.5px;
   }
   
-  .logo-it {
+  .nav-link {
     font-size: 1.1rem;
   }
   
-  .logo-startale {
-    font-size: 1.4rem;
-  }
-  
-  .logo-solutions {
-    font-size: 1.1rem;
+  .nav-menu {
+    gap: 15px;
   }
 }

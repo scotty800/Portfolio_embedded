@@ -1,4 +1,4 @@
-// components/Navbar.jsx - CODE COMPLET
+// components/Navbar.jsx - CODE COMPLET avec "Welcome"
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
@@ -35,12 +35,7 @@ const Navbar = ({ activeSection, setActiveSection }) => {
       <div className="container nav-container">
         <div className="logo">
           <div className="logo-top">
-            <span className="logo-reliable">RELIABLE</span>
-            <span className="logo-it">I.T. SERVICE</span>
-          </div>
-          <div className="logo-bottom">
-            <span className="logo-startale">STARTALE</span>
-            <span className="logo-solutions">SOLUTIONS</span>
+            <span className="logo-welcome">WELCOME</span>
           </div>
         </div>
         
