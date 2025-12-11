@@ -1,4 +1,4 @@
-/* components/ProjectDetail.css - CODE COMPLET */
+/* components/ProjectDetail.css - CODE COMPLET avec ajustements */
 .project-detail {
   width: 100%;
   min-height: 100vh;
@@ -186,12 +186,19 @@
   margin-right: auto;
 }
 
-/* Grille 3 colonnes × 2 lignes */
+/* Grille 3 colonnes × 2 lignes (sauf pour projet 5) */
 .project-blocks-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 30px;
   margin-top: 40px;
+}
+
+/* Pour le projet 5 (1 bloc seulement) */
+.project-blocks-grid.single-block {
+  grid-template-columns: 1fr;
+  max-width: 800px;
+  margin: 40px auto 0;
 }
 
 /* Blocs cliquables */
@@ -396,6 +403,11 @@
   
   .conclusion-title {
     font-size: 1.8rem;
+  }
+  
+  /* Pour le projet 5 en mobile */
+  .project-blocks-grid.single-block {
+    max-width: 100%;
   }
 }
 

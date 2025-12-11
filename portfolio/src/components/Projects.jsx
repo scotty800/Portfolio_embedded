@@ -1,4 +1,4 @@
-// components/Projects.jsx - MODIFIÉ (projet 5 = Mini Racer)
+// components/Projects.jsx - MODIFIÉ (projet 5 = Mini Racer, projet 6 supprimé)
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Projects.css';
@@ -41,14 +41,8 @@ const Projects = () => {
       description: "Jeu de course multijoueur en 3D développé avec Unity, offrant des courses frénétiques de 1 à 4 joueurs avec mécaniques de drift et power-ups.",
       technologies: ["Unity", "C#", "Multiplayer", "3D Modeling", "Game Physics", "UI/UX", "Version Control"],
       icon: "🏎️"
-    },
-    {
-      id: 6,
-      title: "Portfolio Artistique",
-      description: "Galerie interactive pour artistes avec système de commentaires, filtres avancés et galerie virtuelle en 3D.",
-      technologies: ["React", "Three.js", "Cloudinary", "Firebase", "Framer Motion"],
-      icon: "🎨"
     }
+    // Projet 6 supprimé
   ];
 
   const handleViewProject = (projectId) => {

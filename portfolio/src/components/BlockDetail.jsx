@@ -1,15 +1,15 @@
-// components/BlockDetail.jsx - VERSION MODULAIRE
+// components/BlockDetail.jsx - VERSION MODULAIRE AVEC PROJET 6 SUPPRIMÉ
 import React from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import './BlockDetail.css';
 
-// Import des composants de blocs spécifiques
-import EcommerceBlocks from './blocks/ArduinoBlocks';
-import AnalyticsBlocks from './blocks/IoTBlocks';
-import SocialBlocks from './blocks/FPGABlocks';
-import WeatherBlocks from './blocks/FreeRTOSBlocks';
-import ProjectManagementBlocks from './blocks/GameBlocks';
-import ArtisticPortfolioBlocks from './blocks/ArtisticPortfolioBlocks';
+// Import des composants de blocs spécifiques (projet 6 supprimé)
+import ArduinoBlocks from './blocks/ArduinoBlocks';
+import IoTBlocks from './blocks/IoTBlocks';
+import FPGABlocks from './blocks/FPGABlocks';
+import FreeRTOSBlocks from './blocks/FreeRTOSBlocks';
+import GameBlocks from './blocks/GameBlocks';
+// Projet 6 supprimé
 
 const BlockDetail = () => {
   const navigate = useNavigate();
@@ -22,23 +22,33 @@ const BlockDetail = () => {
     navigate('/projects');
   };
 
-  // Sélectionner le composant de blocs selon le projet
+  // Sélectionner le composant de blocs selon le projet (projet 6 supprimé)
   const getBlockComponent = (projectId) => {
     switch(projectId) {
-      case 1: return EcommerceBlocks;
-      case 2: return AnalyticsBlocks;
-      case 3: return SocialBlocks;
-      case 4: return WeatherBlocks;
-      case 5: return ProjectManagementBlocks;
-      case 6: return ArtisticPortfolioBlocks;
-      default: return EcommerceBlocks;
+      case 1: return ArduinoBlocks;
+      case 2: return IoTBlocks;
+      case 3: return FPGABlocks;
+      case 4: return FreeRTOSBlocks;
+      case 5: return GameBlocks;
+      // Projet 6 supprimé
+      default: return ArduinoBlocks;
     }
   };
 
   const BlockComponent = getBlockComponent(projectNum);
   
-  // Navigation entre blocs
-  const nextBlock = blockNum < 6 ? `/project/${projectId}/block/${blockNum + 1}` : null;
+  // Navigation entre blocs - ajusté selon le nombre de blocs par projet
+  const getMaxBlockId = (projectId) => {
+    switch(projectId) {
+      case 1: case 2: case 3: return 6;  // 6 blocs
+      case 4: return 4;                   // 4 blocs
+      case 5: return 1;                   // 1 bloc
+      default: return 6;
+    }
+  };
+
+  const maxBlockId = getMaxBlockId(projectNum);
+  const nextBlock = blockNum < maxBlockId ? `/project/${projectId}/block/${blockNum + 1}` : null;
   const prevBlock = blockNum > 1 ? `/project/${projectId}/block/${blockNum - 1}` : null;
 
   return (

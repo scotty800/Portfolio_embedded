@@ -1,4 +1,4 @@
-// components/ProjectDetail.jsx - MODIFIÉ (projet 5 = 1 bloc seulement)
+// components/ProjectDetail.jsx - MODIFIÉ (projet 6 supprimé)
 import React from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import './ProjectDetail.css';
@@ -13,7 +13,7 @@ const ProjectDetail = () => {
     navigate('/projects'); // Retour direct à la liste des projets
   };
 
-  // DONNÉES POUR CHAQUE PROJET
+  // DONNÉES POUR CHAQUE PROJET (projet 6 supprimé)
 
   // PROJET 1 - Arduino ESP32 (inchangé)
   const project1Blocks = [
@@ -357,52 +357,6 @@ const ProjectDetail = () => {
     }
   ];
 
-  // PROJET 6 - Portfolio Artistique (inchangé)
-  const project6Blocks = [
-    {
-      id: 1,
-      title: "Galerie 3D",
-      description: "Visualisation 3D avec Three.js",
-      icon: "🎭",
-      features: ["Modèles 3D interactifs", "Rotation 360°", "Zoom HD", "Éclairage dynamique"]
-    },
-    {
-      id: 2,
-      title: "Upload Multimédia",
-      description: "Téléchargement optimisé pour artistes",
-      icon: "📤",
-      features: ["Images HD", "Vidéos 4K", "Audio haute qualité", "Compression intelligente"]
-    },
-    {
-      id: 3,
-      title: "Système Commentaires",
-      description: "Interactions sociales modérées",
-      icon: "💬",
-      features: ["Commentaires threadés", "Modération", "Notifications réponses", "Signalement contenu"]
-    },
-    {
-      id: 4,
-      title: "Filtres & Recherche",
-      description: "Recherche avancée dans les œuvres",
-      icon: "🔍",
-      features: ["Recherche par tags", "Filtres multiples", "Reconnaissance visuelle", "Suggestions"]
-    },
-    {
-      id: 5,
-      title: "Portfolio Personnalisable",
-      description: "Thèmes et layouts pour artistes",
-      icon: "🎨",
-      features: ["Thèmes personnalisés", "Layouts flexibles", "Domaines personnels", "SEO optimisé"]
-    },
-    {
-      id: 6,
-      title: "E-commerce Intégré",
-      description: "Vente d'œuvres et produits dérivés",
-      icon: "🛍️",
-      features: ["Boutique en ligne", "Paiements sécurisés", "Gestion stocks", "Livraisons suivies"]
-    }
-  ];
-
   // Sélectionner les blocs selon le projet
   const getProjectBlocks = (id) => {
     switch(id) {
@@ -411,12 +365,47 @@ const ProjectDetail = () => {
       case 3: return project3Blocks;
       case 4: return project4Blocks;
       case 5: return project5Blocks;
-      case 6: return project6Blocks;
       default: return project1Blocks;
     }
   };
 
-  // Données principales des projets - MISES À JOUR POUR PROJET 5
+  // Fonction pour obtenir le titre spécifique par projet
+  const getBlocksTitle = (projectId) => {
+    switch(projectId) {
+      case 1:
+        return "Modules de Développement Arduino ESP32";
+      case 2:
+        return "Systèmes IoT Connectés";
+      case 3:
+        return "Simulations et Conceptions VHDL";
+      case 4:
+        return "Architectures FreeRTOS Avancées";
+      case 5:
+        return "Développement du Jeu";
+      default:
+        return "Modules de Développement";
+    }
+  };
+
+  // Fonction pour obtenir le sous-titre spécifique par projet
+  const getBlocksSubtitle = (projectId) => {
+    switch(projectId) {
+      case 1:
+        return "Découvrez chaque composant et ses fonctionnalités spécifiques";
+      case 2:
+        return "Explorez les différents systèmes IoT connectés";
+      case 3:
+        return "Analysez les simulations et conceptions VHDL détaillées";
+      case 4:
+        return "Comprenez les architectures FreeRTOS et leurs applications";
+      case 5:
+        return "Découvrez le processus complet de création de ce jeu de course";
+      default:
+        return "Découvrez les détails techniques de chaque composant";
+    }
+  };
+
+  // Données principales des projets - PROJET 6 SUPPRIMÉ
   const projectDetails = {
     1: {
       title: "Projet Arduino ESP32",
@@ -457,19 +446,14 @@ const ProjectDetail = () => {
       github: "#",
       demo: "#",
       status: "🚀 En production"
-    },
-    6: {
-      title: "Portfolio Artistique",
-      description: "Plateforme portfolio pour artistes avec galerie 3D, e-commerce intégré et système de commentaires.",
-      technologies: ["React", "Three.js", "Cloudinary", "Firebase", "Framer Motion", "Stripe", "Node.js"],
-      github: "#",
-      demo: "#",
-      status: "🚀 En production"
     }
+    // Projet 6 supprimé
   };
 
   const project = projectDetails[projectId] || projectDetails[1];
   const projectBlocks = getProjectBlocks(projectId);
+  const blocksTitle = getBlocksTitle(projectId);
+  const blocksSubtitle = getBlocksSubtitle(projectId);
 
   return (
     <div className="project-detail">
@@ -510,18 +494,18 @@ const ProjectDetail = () => {
           </div>
         </div>
 
-        {/* Grille des blocs - ADAPTÉE POUR 1 BLOC */}
+        {/* Grille des blocs - ADAPTÉE POUR 1 BLOC SEULEMENT POUR LE PROJET 5 */}
         <div className="project-blocks-section">
-          <h2 className="blocks-title">Développement du Jeu</h2>
-          <p className="blocks-subtitle">Découvrez le processus complet de création de ce jeu de course</p>
+          <h2 className="blocks-title">{blocksTitle}</h2>
+          <p className="blocks-subtitle">{blocksSubtitle}</p>
           
-          <div className="project-blocks-grid" style={{ gridTemplateColumns: '1fr' }}>
+          <div className="project-blocks-grid" style={projectId === 5 ? { gridTemplateColumns: '1fr', maxWidth: '800px', margin: '0 auto' } : {}}>
             {projectBlocks.map(block => (
               <Link 
                 to={`/project/${projectId}/block/${block.id}`}
                 className="project-block clickable-block"
                 key={block.id}
-                style={{ maxWidth: '800px', margin: '0 auto' }}
+                style={projectId === 5 ? { maxWidth: '800px', margin: '0 auto' } : {}}
               >
                 <div className="block-header">
                   <div className="block-icon">{block.icon}</div>
@@ -547,8 +531,11 @@ const ProjectDetail = () => {
         <div className="project-conclusion">
           <h3 className="conclusion-title">Conclusion</h3>
           <p className="conclusion-text">
-            Ce projet démontre ma capacité à concevoir et développer {projectId <= 2 ? "des systèmes embarqués robustes" : projectId === 3 ? "des circuits numériques complexes" : projectId === 4 ? "des systèmes temps réel performants" : "des expériences interactives captivantes"} 
-            avec une architecture robuste, une interface utilisateur moderne et des fonctionnalités avancées. 
+            {projectId === 1 && "Ce projet démontre ma capacité à concevoir et développer des systèmes embarqués robustes avec ESP32, allant du contrôle basique des LEDs à des systèmes complexes avec capteurs et interfaces utilisateur."}
+            {projectId === 2 && "Ce projet illustre mon expertise dans la création de systèmes IoT complets, intégrant capteurs, communications sans fil, cloud computing et interfaces utilisateur modernes."}
+            {projectId === 3 && "Ce projet montre ma maîtrise du design numérique avec VHDL et FPGA, depuis les circuits combinatoires de base jusqu'aux machines à états finis complexes avec interfaces multiples."}
+            {projectId === 4 && "Ce projet démontre mes compétences en programmation temps réel avec FreeRTOS, incluant la synchronisation de tâches, la gestion des interruptions et le développement de drivers professionnels."}
+            {projectId === 5 && "Ce projet de jeu vidéo complet démontre ma polyvalence en développement logiciel, modélisation 3D, design d'interface et gestion de projet de A à Z."}
             Chaque aspect a été soigneusement pensé pour offrir la meilleure expérience utilisateur possible.
           </p>
         </div>
