@@ -84,12 +84,7 @@ const Projects = () => {
                   >
                     Voir le projet
                   </button>
-                  <button 
-                    className="project-btn outline"
-                    onClick={() => handleViewCode(project.title)}
-                  >
-                    Code source
-                  </button>
+                  {/* Bouton Code source supprimé */}
                 </div>
               </div>
               

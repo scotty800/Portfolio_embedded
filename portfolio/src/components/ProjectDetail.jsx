@@ -1,4 +1,4 @@
-// components/ProjectDetail.jsx - MODIFIÉ (projet 6 supprimé)
+// components/ProjectDetail.jsx - MODIFIÉ (sans GitHub, Demo, Status, Conclusion)
 import React from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import './ProjectDetail.css';
@@ -8,9 +8,8 @@ const ProjectDetail = () => {
   const { id } = useParams();
   const projectId = parseInt(id);
 
-  // Correction : Navigation directe vers la liste des projets
   const handleBackToProjects = () => {
-    navigate('/projects'); // Retour direct à la liste des projets
+    navigate('/projects');
   };
 
   // DONNÉES POUR CHAQUE PROJET (projet 6 supprimé)
@@ -405,49 +404,33 @@ const ProjectDetail = () => {
     }
   };
 
-  // Données principales des projets - PROJET 6 SUPPRIMÉ
+  // Données principales des projets - SANS GITHUB, DEMO, STATUS
   const projectDetails = {
     1: {
       title: "Projet Arduino ESP32",
       description: "Bienvenue dans ce projet excitant ! Dans ce projet, nous utiliserons la puce 74HC595 pour contrôler un affichage défilant de 8 LEDs. Imaginez déclencher ce projet et assister à un flux lumineux captivant, comme un arc-en-ciel scintillant sautant entre les 8 LEDs. Chaque LED s'allume une par une et s'éteint rapidement, tandis que la LED suivante continue de briller, créant un effet dynamique et magnifique.",
-      technologies: ["Arduino IDE", "C/C++", "ESP32", "74HC595", "LEDs", "PWM", "GPIO", "Capteurs", "Affichage"],
-      github: "#",
-      demo: "#",
-      status: "🚀 En production"
+      technologies: ["Arduino IDE", "C/C++", "ESP32", "74HC595", "LEDs", "PWM", "GPIO", "Capteurs", "Affichage"]
     },
     2: {
       title: "Projet IoT ESP32",
       description: "CheerLights est un réseau mondial de lumières synchronisées qui peuvent être contrôlées par n'importe qui. Dans ce projet, nous utilisons également MQTT, mais au lieu de publier nos propres messages, nous nous abonnons au sujet « cheerlights ». Cela nous permet de recevoir les messages envoyés par d'autres au sujet « cheerlights » et d'utiliser ces informations pour changer la couleur de notre bande LED en conséquence.",
-      technologies: ["Arduino IDE", "C/C++", "ESP32", "MQTT", "WiFi", "Bluetooth", "LED RGB", "Cloud IoT", "Web Server"],
-      github: "#",
-      demo: "#",
-      status: "🚀 En production"
+      technologies: ["Arduino IDE", "C/C++", "ESP32", "MQTT", "WiFi", "Bluetooth", "LED RGB", "Cloud IoT", "Web Server"]
     },
     3: {
       title: "Projet FPGA Simulation",
       description: "Ce module VHDL implémente une machine à états finis (S0, S1, S2) contrôlant une LED. S0 : LED allumée, S1 : LED éteinte, S2 : LED clignote. La FSM avance à chaque front d'horloge, avec un reset qui revient à S0.",
-      technologies: ["VHDL", "Xilinx Vivado", "FPGA", "FSM", "7 Segments", "Portes Logiques", "Compteurs", "Circuits Numériques"],
-      github: "#",
-      demo: "#",
-      status: "🚀 En production"
+      technologies: ["VHDL", "Xilinx Vivado", "FPGA", "FSM", "7 Segments", "Portes Logiques", "Compteurs", "Circuits Numériques"]
     },
     4: {
       title: "Projet FreeRTOS ESP32",
       description: "FreeRTOS applique automatiquement Priority Inheritance. Si TaskCom1 (prio 2) détient le mutex, et TaskCom2 (prio 3) attend, TaskCom1 hérite temporairement de prio 3. Elle libère le mutex plus vite, garantissant l'absence d'inversion de priorité → conformité temps réel stricte.",
-      technologies: ["FreeRTOS", "Arduino IDE", "C/C++", "ESP32", "Mutex", "Sémaphores", "Queues", "Priority Inheritance", "RTOS"],
-      github: "#",
-      demo: "#",
-      status: "🚀 En production"
+      technologies: ["FreeRTOS", "Arduino IDE", "C/C++", "ESP32", "Mutex", "Sémaphores", "Queues", "Priority Inheritance", "RTOS"]
     },
     5: {
       title: "Projet Mini Racer",
       description: "Mini Racer est un jeu de course multijoueur développé de A à Z avec Unity en C#. Ce projet représente la création complète d'un jeu vidéo, depuis la conception initiale jusqu'au déploiement final. J'ai développé l'ensemble de l'architecture du jeu, implémenté la physique avancée des véhicules avec système de drift réaliste, créé le système multijoueur en réseau pour 1 à 4 joueurs, modélisé les circuits et véhicules en 3D, conçu les mécaniques de jeu et les power-ups, et développé l'interface utilisateur immersive avec design sonore complet. Ce projet démontre ma capacité à gérer un projet de jeu vidéo complet de manière autonome.",
-      technologies: ["Unity", "C#", "3D Modeling", "Game Physics", "Multiplayer", "UI/UX Design", "Audio Design", "Version Control", "Project Management"],
-      github: "#",
-      demo: "#",
-      status: "🚀 En production"
+      technologies: ["Unity", "C#", "3D Modeling", "Game Physics", "Multiplayer", "UI/UX Design", "Audio Design", "Version Control", "Project Management"]
     }
-    // Projet 6 supprimé
   };
 
   const project = projectDetails[projectId] || projectDetails[1];
@@ -457,14 +440,13 @@ const ProjectDetail = () => {
 
   return (
     <div className="project-detail">
-      {/* Header avec bouton retour CORRIGÉ */}
+      {/* Header avec bouton retour */}
       <div className="project-detail-header">
         <button className="back-btn" onClick={handleBackToProjects}>
           ← Retour aux projets
         </button>
         <div className="project-header-content">
           <h1 className="project-detail-title">{project.title}</h1>
-          <span className="project-status">{project.status}</span>
         </div>
       </div>
 
@@ -483,18 +465,9 @@ const ProjectDetail = () => {
               ))}
             </div>
           </div>
-
-          <div className="project-links">
-            <a href={project.github} target="_blank" rel="noopener noreferrer" className="project-link">
-              <span className="link-icon">📂</span> Code source GitHub
-            </a>
-            <a href={project.demo} target="_blank" rel="noopener noreferrer" className="project-link demo">
-              <span className="link-icon">🚀</span> Voir la démo live
-            </a>
-          </div>
         </div>
 
-        {/* Grille des blocs - ADAPTÉE POUR 1 BLOC SEULEMENT POUR LE PROJET 5 */}
+        {/* Grille des blocs */}
         <div className="project-blocks-section">
           <h2 className="blocks-title">{blocksTitle}</h2>
           <p className="blocks-subtitle">{blocksSubtitle}</p>
@@ -525,19 +498,6 @@ const ProjectDetail = () => {
               </Link>
             ))}
           </div>
-        </div>
-
-        {/* Section conclusion */}
-        <div className="project-conclusion">
-          <h3 className="conclusion-title">Conclusion</h3>
-          <p className="conclusion-text">
-            {projectId === 1 && "Ce projet démontre ma capacité à concevoir et développer des systèmes embarqués robustes avec ESP32, allant du contrôle basique des LEDs à des systèmes complexes avec capteurs et interfaces utilisateur."}
-            {projectId === 2 && "Ce projet illustre mon expertise dans la création de systèmes IoT complets, intégrant capteurs, communications sans fil, cloud computing et interfaces utilisateur modernes."}
-            {projectId === 3 && "Ce projet montre ma maîtrise du design numérique avec VHDL et FPGA, depuis les circuits combinatoires de base jusqu'aux machines à états finis complexes avec interfaces multiples."}
-            {projectId === 4 && "Ce projet démontre mes compétences en programmation temps réel avec FreeRTOS, incluant la synchronisation de tâches, la gestion des interruptions et le développement de drivers professionnels."}
-            {projectId === 5 && "Ce projet de jeu vidéo complet démontre ma polyvalence en développement logiciel, modélisation 3D, design d'interface et gestion de projet de A à Z."}
-            Chaque aspect a été soigneusement pensé pour offrir la meilleure expérience utilisateur possible.
-          </p>
         </div>
       </div>
     </div>

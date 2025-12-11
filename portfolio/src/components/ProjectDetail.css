@@ -1,4 +1,4 @@
-/* components/ProjectDetail.css - CODE COMPLET avec ajustements */
+/* components/ProjectDetail.css - CODE COMPLET sans sections supprimées */
 .project-detail {
   width: 100%;
   min-height: 100vh;
@@ -51,16 +51,6 @@
   color: var(--text-white);
   letter-spacing: 2px;
   margin: 0;
-}
-
-.project-status {
-  background: rgba(26, 115, 232, 0.2);
-  color: var(--color4);
-  padding: 8px 20px;
-  border-radius: 25px;
-  font-weight: 600;
-  font-size: 1rem;
-  border: 1px solid rgba(164, 191, 228, 0.3);
 }
 
 .project-detail-container {
@@ -120,46 +110,6 @@
 .tech-tag:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: translateY(-2px);
-}
-
-.project-links {
-  display: flex;
-  gap: 20px;
-  margin-top: 40px;
-}
-
-.project-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background: rgba(255, 255, 255, 0.9);
-  color: var(--color2);
-  padding: 15px 30px;
-  border-radius: 5px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: var(--transition);
-  font-family: 'Segoe UI', sans-serif;
-}
-
-.project-link.demo {
-  background: transparent;
-  color: var(--text-white);
-  border: 2px solid var(--text-white);
-}
-
-.project-link:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.project-link.demo:hover {
-  background: var(--text-white);
-  color: var(--color2);
-}
-
-.link-icon {
-  font-size: 1.2rem;
 }
 
 /* Section des blocs */
@@ -323,45 +273,10 @@
   font-size: 1rem;
 }
 
-/* Section conclusion */
-.project-conclusion {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  padding: 40px;
-  margin-top: 60px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-}
-
-.conclusion-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 2.2rem;
-  color: var(--text-white);
-  margin-bottom: 20px;
-  letter-spacing: 1.5px;
-}
-
-.conclusion-text {
-  color: var(--text-light);
-  font-size: 1.1rem;
-  line-height: 1.7;
-  max-width: 800px;
-  margin: 0 auto;
-}
-
 /* Responsive */
 @media (max-width: 992px) {
   .project-blocks-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .project-links {
-    flex-direction: column;
-  }
-  
-  .project-link {
-    justify-content: center;
   }
   
   .project-header-content {
@@ -394,15 +309,6 @@
   
   .project-blocks-section {
     margin: 40px 0;
-  }
-  
-  .project-conclusion {
-    padding: 30px 20px;
-    margin-top: 40px;
-  }
-  
-  .conclusion-title {
-    font-size: 1.8rem;
   }
   
   /* Pour le projet 5 en mobile */
