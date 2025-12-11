@@ -1,4 +1,4 @@
-// components/blocks/ArduinoBlocks.jsx - CORRIGÉ avec gestion vidéo
+// components/blocks/ArduinoBlocks.jsx - CORRIGÉ avec nouveaux snippets
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
@@ -88,50 +88,76 @@ const ArduinoBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
         imageCaption: "Dégradé fluide de couleurs sur LED RGB contrôlée par ESP32 avec potentiomètre",
         videoDescription: "Vidéo démontrant le contrôle en temps réel de la LED RGB avec transition fluide des couleurs via le potentiomètre.",
         codeSnippet: `// ESP32 - Contrôle LED RGB avec potentiomètre
-#include <Arduino.h>
+const int redPin = 27;
+const int greenPin = 26;
+const int bluePin = 25;
 
-const int potPin = 34; // GPIO34 pour potentiomètre
-const int redPin = 25; // GPIO25 LED Rouge
-const int greenPin = 26; // GPIO26 LED Verte
-const int bluePin = 27; // GPIO27 LED Bleue
+const int freq = 5000;
+const int resolution = 8;
+
+#define KNOB_PIN 14
 
 void setup() {
   Serial.begin(115200);
-  pinMode(redPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
-  pinMode(potPin, INPUT);
-}
-
-void hsvToRgb(float h, float s, float v, int& r, int& g, int& b) {
-  int i = floor(h * 6);
-  float f = h * 6 - i;
-  float p = v * (1 - s);
-  float q = v * (1 - f * s);
-  float t = v * (1 - (1 - f) * s);
-  
-  switch(i % 6) {
-    case 0: r = v; g = t; b = p; break;
-    case 1: r = q; g = v; b = p; break;
-    case 2: r = p; g = v; b = t; break;
-    case 3: r = p; g = q; b = v; break;
-    case 4: r = t; g = p; b = v; break;
-    case 5: r = v; g = p; b = q; break;
-  }
+  ledcAttach(redPin, freq, resolution);
+  ledcAttach(greenPin, freq, resolution);
+  ledcAttach(bluePin, freq, resolution);
 }
 
 void loop() {
-  int potValue = analogRead(potPin);
-  float hue = map(potValue, 0, 4095, 0, 100) / 100.0;
-  
-  int r, g, b;
-  hsvToRgb(hue, 1.0, 255, r, g, b);
-  
-  analogWrite(redPin, r);
-  analogWrite(greenPin, g);
-  analogWrite(bluePin, b);
-  
-  delay(50);
+  int knobValue = analogRead(KNOB_PIN);
+  Serial.println(knobValue);
+  float hueValue = (float)knobValue / 4095.0;
+
+  int hue = (int)(hueValue * 360);
+
+  int red, green, blue;
+  HUEtoRGB(hue, &red, &green, &blue);
+
+  setColor(red, green, blue);
+}
+
+void setColor(int red, int green, int blue) {
+  ledcWrite(redPin, red);
+  ledcWrite(greenPin, green);
+  ledcWrite(bluePin, blue);
+}
+
+// Convert a HUE value to RGB values
+void HUEtoRGB(int hue, int* red, int* green, int* blue) {
+  float h = (float)hue / 60.0;
+  float c = 1.0;
+  float x = c * (1.0 - fabs(fmod(h, 2.0) - 1.0));
+  float r, g, b;
+  if (h < 1.0) {
+    r = c;
+    g = x;
+    b = 0;
+  } else if (h < 2.0) {
+    r = x;
+    g = c;
+    b = 0;
+  } else if (h < 3.0) {
+    r = 0;
+    g = c;
+    b = x;
+  } else if (h < 4.0) {
+    r = 0;
+    g = x;
+    b = c;
+  } else if (h < 5.0) {
+    r = x;
+    g = 0;
+    b = c;
+  } else {
+    r = c;
+    g = 0;
+    b = x;
+  }
+  float m = 1.0 - c;
+  *red = (int)((r + m) * 255);
+  *green = (int)((g + m) * 255);
+  *blue = (int)((b + m) * 255);
 }`,
         challenges: [
           "Calibration précise du potentiomètre",
@@ -163,48 +189,24 @@ void loop() {
         imageCaption: "Montage avec registre à décalage 74HC595 et 8 LEDs",
         videoDescription: "Démonstration de l'animation défilante des 8 LEDs avec différents motifs programmés.",
         codeSnippet: `// ESP32 - Contrôle 8 LEDs avec 74HC595
-#include <Arduino.h>
+const int STcp = 27;
+const int SHcp = 26; 
+const int DS = 25; 
 
-// Pins 74HC595
-const int dataPin = 16;   // DS (pin 14)
-const int latchPin = 17;  // ST_CP (pin 12)
-const int clockPin = 18;  // SH_CP (pin 11)
+int datArray[] = {B00000000, B00000001, B00000011, B00000111, B00001111, B00011111, B00111111, B01111111, B11111111};
 
 void setup() {
-  pinMode(dataPin, OUTPUT);
-  pinMode(latchPin, OUTPUT);
-  pinMode(clockPin, OUTPUT);
+  pinMode(STcp, OUTPUT);
+  pinMode(SHcp, OUTPUT);
+  pinMode(DS, OUTPUT);
 }
-
-void shiftOut(byte data) {
-  digitalWrite(latchPin, LOW);
-  for (int i = 7; i >= 0; i--) {
-    digitalWrite(clockPin, LOW);
-    digitalWrite(dataPin, (data >> i) & 0x01);
-    digitalWrite(clockPin, HIGH);
-  }
-  digitalWrite(latchPin, HIGH);
-}
-
-// Effets LED
-const byte patterns[] = {
-  0b00000001, 0b00000010, 0b00000100, 0b00001000,
-  0b00010000, 0b00100000, 0b01000000, 0b10000000
-};
 
 void loop() {
-  // Effet défilant
-  for (int i = 0; i < 8; i++) {
-    shiftOut(patterns[i]);
-    delay(200);
-  }
-  
-  // Effet arc-en-ciel
-  for (int i = 0; i < 8; i++) {
-    shiftOut(0xFF); // Toutes allumées
-    delay(100);
-    shiftOut(0x00); // Toutes éteintes
-    delay(100);
+  for(int num = 0; num < 10; num++) {
+    digitalWrite(STcp, LOW); 
+    shiftOut(DS, SHcp, MSBFIRST, datArray[num]);
+    digitalWrite(STcp, HIGH);
+    delay(1000);
   }
 }`,
         challenges: [
@@ -237,52 +239,26 @@ void loop() {
         imageCaption: "Système de détection mouvement avec LED d'alerte",
         videoDescription: "Détection de mouvement en temps réel avec activation automatique de la LED et du relais.",
         codeSnippet: `// ESP32 - Détecteur mouvement PIR
-#include <Arduino.h>
-
-const int pirPin = 4;     // GPIO4 pour capteur PIR
-const int ledPin = 2;     // GPIO2 LED intégrée ESP32
-const int relayPin = 23;  // GPIO23 pour relais
-
-bool motionDetected = false;
-unsigned long lastMotionTime = 0;
-const unsigned long timeout = 10000; // 10 secondes
+const int pirPin = 14;
+const int ledPin = 26; 
+int pirState = 0;
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(115200);  
   pinMode(pirPin, INPUT);
   pinMode(ledPin, OUTPUT);
-  pinMode(relayPin, OUTPUT);
-  
-  // Attente calibration capteur PIR (30-60s)
-  Serial.println("Calibration capteur PIR...");
-  for(int i = 0; i < 30; i++) {
-    Serial.print(".");
-    delay(1000);
-  }
-  Serial.println("Prêt!");
 }
 
 void loop() {
-  int pirState = digitalRead(pirPin);
-  
-  if(pirState == HIGH) {
-    if(!motionDetected) {
-      Serial.println("Mouvement détecté!");
-      motionDetected = true;
-      lastMotionTime = millis();
-    }
-    digitalWrite(ledPin, HIGH);
-    digitalWrite(relayPin, HIGH);
-  } else {
-    if(motionDetected && (millis() - lastMotionTime > timeout)) {
-      Serial.println("Plus de mouvement");
-      motionDetected = false;
-    }
-    digitalWrite(ledPin, LOW);
-    digitalWrite(relayPin, LOW);
-  }
-  
+  pirState = digitalRead(pirPin);
+  Serial.println(pirState);
   delay(100);
+
+  if (pirState == HIGH) {
+    digitalWrite(ledPin, HIGH);
+  } else {
+    digitalWrite(ledPin, LOW);
+  }
 }`,
         challenges: [
           "Faux positifs avec animaux/chaleur",
@@ -314,53 +290,27 @@ void loop() {
         imageCaption: "Affichage de messages sur LCD avec interface I2C",
         videoDescription: "Affichage en direct du compteur et du message défilant sur l'écran LCD.",
         codeSnippet: `// ESP32 - Contrôle LCD I2C 16x2
-#include <Wire.h>
+#include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 
-// Adresse I2C LCD (généralement 0x27 ou 0x3F)
-LiquidCrystal_I2C lcd(0x27, 16, 2);
+LiquidCrystal_I2C lcd(0x27, 16, 2); 
 
-int counter = 0;
+int count = 0;
 
 void setup() {
-  Serial.begin(115200);
-  Wire.begin(21, 22); // SDA=GPIO21, SCL=GPIO22
-  
   lcd.init();
-  lcd.backlight();
-  
-  // Message initial
-  lcd.setCursor(0, 0);
-  lcd.print("Projet Arduino");
-  lcd.setCursor(0, 1);
-  lcd.print("ESP32 + LCD");
-  delay(2000);
-  lcd.clear();
+  lcd.backlight(); 
+  lcd.print("Hello, world!");
+  delay(3000);
 }
 
 void loop() {
-  // Ligne 1: Message fixe
-  lcd.setCursor(0, 0);
-  lcd.print("Compteur: ");
-  lcd.print(counter);
-  
-  // Ligne 2: Message défilant
-  String message = "ESP32 LCD I2C Fonctionnel ";
-  static int pos = 0;
-  
-  if(pos < message.length() - 16) {
-    lcd.setCursor(0, 1);
-    lcd.print(message.substring(pos, pos + 16));
-    pos++;
-  } else {
-    pos = 0;
-  }
-  
-  // Incrément compteur
-  counter++;
-  if(counter > 9999) counter = 0;
-  
-  delay(500);
+  lcd.clear(); 
+  lcd.setCursor(0, 0); 
+  lcd.print("COUNT: ");
+  lcd.print(count);
+  delay(1000);
+  count++;
 }`,
         challenges: [
           "Adresse I2C non détectée",
@@ -391,67 +341,64 @@ void loop() {
         technologies: ["WS2812B LED Strip", "HC-SR04 Ultrason", "ESP32", "Alimentation 5V 3A", "Condensateur 1000µF"],
         imageCaption: "Animation lumière courante sur bande LED 30 LEDs",
         videoDescription: "Démonstration de l'animation lumière courante avec changement de direction automatique lors de la détection d'obstacle.",
-        codeSnippet: `// ESP32 - Animation WS2812 avec ultrason
+        codeSnippet: `// ESP32 - Animation WS2812 avec détection d'obstacles
 #include <Adafruit_NeoPixel.h>
 
-#define LED_PIN 15
-#define LED_COUNT 30
-#define TRIG_PIN 5
-#define ECHO_PIN 18
+// Set the number of pixels for the running light
+#define NUM_PIXELS 8
 
-Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+// Set the data pin for the RGB LED strip
+#define DATA_PIN 14
 
-int currentLed = 0;
-int direction = 1; // 1 = forward, -1 = backward
-unsigned long lastChange = 0;
-const int animationSpeed = 50; // ms
+// Initialize the RGB LED strip object
+Adafruit_NeoPixel pixels(NUM_PIXELS, DATA_PIN, NEO_GRB + NEO_KHZ800);
+
+// Initialize the avoid sensor
+#define AVOID_PIN 25
 
 void setup() {
-  Serial.begin(115200);
-  strip.begin();
-  strip.show(); // Initialiser toutes LEDs éteintes
-  strip.setBrightness(50); // 20% luminosité
-  
-  pinMode(TRIG_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
-}
+  // Initialize the RGB LED strip
+  pixels.begin();
 
-long getDistance() {
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-  
-  long duration = pulseIn(ECHO_PIN, HIGH);
-  return duration * 0.034 / 2; // cm
+  // Initialize the avoid sensor
+  pinMode(AVOID_PIN, INPUT_PULLUP);
+
+  // Set the initial LED color
+  uint32_t color = pixels.Color(random(256), random(256), random(256));
+  pixels.fill(color);
+  pixels.show();
 }
 
 void loop() {
-  // Détection obstacle
-  long distance = getDistance();
-  if(distance < 20 && distance > 0) { // Obstacle < 20cm
-    direction *= -1; // Changer direction
-    Serial.println("Direction changée!");
+  // Read the input from the infrared sensor
+  bool avoid_value = digitalRead(AVOID_PIN);
+
+  // Generate a random color for the current pixel
+  uint32_t color = pixels.Color(random(256), random(256), random(256));
+
+  // If no obstacle is detected
+  if (avoid_value) {
+    for (int i = 0; i < NUM_PIXELS; i++) {
+      // Turn on the current pixel with the random color
+      pixels.setPixelColor(i, color);
+
+      // Update the RGB LED strip display
+      pixels.show();
+
+      // Turn off the current pixel
+      pixels.setPixelColor(i, 0);
+      delay(100);
+    }
   }
-  
-  // Effacer LED précédente
-  if(currentLed >= 0 && currentLed < LED_COUNT) {
-    strip.setPixelColor(currentLed, 0, 0, 0);
+  // If detects an obstacle, change the direction of the LED strip
+  else {
+    for (int i = NUM_PIXELS - 1; i >= 0; i--) {
+      pixels.setPixelColor(i, color);
+      pixels.show();
+      pixels.setPixelColor(i, 0);
+      delay(100);
+    }
   }
-  
-  // Déplacer position
-  currentLed += direction;
-  if(currentLed >= LED_COUNT) currentLed = 0;
-  if(currentLed < 0) currentLed = LED_COUNT - 1;
-  
-  // Allumer LED courante (couleur arc-en-ciel)
-  int hue = (currentLed * 256 / LED_COUNT) % 256;
-  uint32_t color = strip.ColorHSV(hue * 256, 255, 128);
-  strip.setPixelColor(currentLed, color);
-  
-  strip.show();
-  delay(animationSpeed);
 }`,
         challenges: [
           "Timing précis WS2812 (800kHz)",
@@ -482,70 +429,31 @@ void loop() {
         technologies: ["L293D Motor Driver", "Moteur DC 6-12V", "Diode 1N4007", "Condensateur 0.1µF", "ESP32", "Alimentation externe"],
         imageCaption: "Driver L293D contrôlant un moteur DC 12V",
         videoDescription: "Démonstration du contrôle de vitesse et de direction du moteur avec le potentiomètre.",
-        codeSnippet: `// ESP32 - Contrôle moteur L293D
-#include <Arduino.h>
-
-// Pins L293D
-const int enA = 13;  // Enable A (PWM)
-const int in1 = 12;  // Input 1
-const int in2 = 14;  // Input 2
-
-// Potentiomètre vitesse
-const int speedPin = 34;
+        codeSnippet: `// ESP32 - Contrôle moteur DC bidirectionnel
+// Définir les pins du moteur
+const int motor1A = 25;  // Pin 1 du moteur
+const int motor2A = 26;  // Pin 2 du moteur
 
 void setup() {
-  Serial.begin(115200);
-  
-  pinMode(enA, OUTPUT);
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
-  pinMode(speedPin, INPUT);
-  
-  // Configuration PWM
-  ledcSetup(0, 5000, 8); // Channel 0, 5kHz, 8-bit
-  ledcAttachPin(enA, 0);
-  
-  Serial.println("Contrôle moteur L293D prêt");
-}
-
-void setMotorSpeed(int speed) {
-  speed = constrain(speed, -255, 255);
-  
-  if(speed > 0) {
-    // Sens avant
-    digitalWrite(in1, HIGH);
-    digitalWrite(in2, LOW);
-    ledcWrite(0, speed);
-  } else if(speed < 0) {
-    // Sens arrière
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, HIGH);
-    ledcWrite(0, -speed);
-  } else {
-    // Arrêt
-    digitalWrite(in1, LOW);
-    digitalWrite(in2, LOW);
-    ledcWrite(0, 0);
-  }
+  pinMode(motor1A, OUTPUT);
+  pinMode(motor2A, OUTPUT);  
 }
 
 void loop() {
-  // Lire vitesse potentiomètre (-255 à 255)
-  int potValue = analogRead(speedPin);
-  int speed = map(potValue, 0, 4095, -255, 255);
-  
-  // Appliquer vitesse moteur
-  setMotorSpeed(speed);
-  
-  // Affichage debug
-  static int lastSpeed = 0;
-  if(abs(speed - lastSpeed) > 10) {
-    Serial.print("Vitesse moteur: ");
-    Serial.println(speed);
-    lastSpeed = speed;
-  }
-  
-  delay(100);
+  // Tourner dans un sens pendant 2 secondes
+  digitalWrite(motor1A, HIGH);     
+  digitalWrite(motor2A, LOW);   
+  delay(2000); 
+
+  // Tourner dans l'autre sens pendant 2 secondes
+  digitalWrite(motor1A, LOW);     
+  digitalWrite(motor2A, HIGH);    
+  delay(2000); 
+
+  // Arrêter le moteur pendant 3 secondes
+  digitalWrite(motor1A, LOW);     
+  digitalWrite(motor2A, LOW);    
+  delay(3000);
 }`,
         challenges: [
           "Chauffage L293D à haute charge",
@@ -645,29 +553,29 @@ void loop() {
           </div>
 
           {/* SECTION VIDÉO AVEC CONTAINER FIXE */}
-<div className="block-section">
-  <h2 className="section-title">Démonstration Vidéo</h2>
-  
-  <div className="video-description">
-    <p>{blockData.videoDescription}</p>
-  </div>
-  
-  <div className="video-container-fixed">
-    <div className="video-wrapper">
-      <video
-        key={`video-${projectId}-${blockId}-${videoKey}`}
-        ref={videoRef}
-        className="responsive-video"
-        controls
-        poster={currentImage}
-        preload="metadata"
-      >
-        <source src={currentVideo} type="video/mp4" />
-        Votre navigateur ne supporte pas la lecture de vidéos.
-      </video>
-    </div>
-  </div>
-</div>
+          <div className="block-section">
+            <h2 className="section-title">Démonstration Vidéo</h2>
+            
+            <div className="video-description">
+              <p>{blockData.videoDescription}</p>
+            </div>
+            
+            <div className="video-container-fixed">
+              <div className="video-wrapper">
+                <video
+                  key={`video-${projectId}-${blockId}-${videoKey}`}
+                  ref={videoRef}
+                  className="responsive-video"
+                  controls
+                  poster={currentImage}
+                  preload="metadata"
+                >
+                  <source src={currentVideo} type="video/mp4" />
+                  Votre navigateur ne supporte pas la lecture de vidéos.
+                </video>
+              </div>
+            </div>
+          </div>
 
           <div className="block-section">
             <h2 className="section-title">Extrait de code</h2>
