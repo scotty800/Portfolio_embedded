@@ -1,5 +1,5 @@
-// components/blocks/GameBlocks.jsx - VIDÉO DANS PUBLIC
-import React, { useState } from 'react';
+// components/blocks/GameBlocks.jsx - VIDÉO SUR CLOUDINARY
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 // Import des images optimisées
@@ -13,14 +13,33 @@ import physicsSimulationImg from '../../assets/projects/game/physics-simulation-
 import audioDesignImg from '../../assets/projects/game/audio-design-optimized.jpg';
 import optimizationToolsImg from '../../assets/projects/game/optimization-tools-optimized.jpg';
 
-// VIDÉO DÉPLACÉE DANS PUBLIC
-const gameDemoVideo = '/videos/game/mini-racer-demo-optimized.mp4';
+// Configuration Cloudinary
+const CLOUDINARY_CLOUD_NAME = 'dfwwlbhuw';
+const CLOUDINARY_BASE_URL = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}/video/upload`;
+
+// VIDÉO SUR CLOUDINARY - URL corrigée avec player Cloudinary
+const gameDemoVideo = `https://player.cloudinary.com/embed/?cloud_name=${CLOUDINARY_CLOUD_NAME}&public_id=mini-racer-demo-optimized_lvqrjc&profile=cld-default`;
 
 const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
   const [showVideo, setShowVideo] = useState(false);
+  const [isVideoLoading, setIsVideoLoading] = useState(false);
+  const [videoError, setVideoError] = useState(false);
 
   const toggleVideo = () => {
     setShowVideo(!showVideo);
+    if (!showVideo) {
+      setIsVideoLoading(true);
+      setVideoError(false);
+    }
+  };
+
+  const handleVideoError = () => {
+    setVideoError(true);
+    setIsVideoLoading(false);
+  };
+
+  const handleVideoLoaded = () => {
+    setIsVideoLoading(false);
   };
 
   const blocksData = {
@@ -103,7 +122,7 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
             </div>
           </div>
 
-          {/* SECTION IMAGE PRINCIPALE - SANS CAPTION */}
+          {/* SECTION IMAGE PRINCIPALE */}
           <div className="block-section">
             <h2 className="section-title">Aperçu du Jeu</h2>
             <div className="single-image-container">
@@ -118,7 +137,7 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
             </div>
           </div>
 
-          {/* SECTION 8 IMAGES ADDITIONNELLES - SANS TEXTES */}
+          {/* SECTION 8 IMAGES ADDITIONNELLES */}
           <div className="block-section">
             <h2 className="section-title">Galerie du Développement</h2>
             
@@ -147,21 +166,49 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
             </div>
           </div>
 
-          {/* SECTION VIDÉO */}
+          {/* SECTION VIDÉO AVEC PLAYER CLOUDINARY */}
           <div className="block-section video-section">
             <h2 className="section-title">Démonstration Vidéo</h2>
+          
+            
             <div className="simple-video-container">
               {showVideo ? (
                 <div className="video-player-full">
-                  <video
-                    src={blockData.videoLink}
-                    title="Mini Racer Gameplay Demo"
-                    controls
-                    autoPlay
-                    className="fullscreen-video"
-                  >
-                    Votre navigateur ne supporte pas la lecture de vidéos.
-                  </video>
+                  <div className="cloudinary-player-container">
+                    <iframe
+                      src={blockData.videoLink}
+                      title="Mini Racer Gameplay Demo"
+                      className="cloudinary-iframe"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      onLoad={handleVideoLoaded}
+                      onError={handleVideoError}
+                    ></iframe>
+                    
+                    {isVideoLoading && (
+                      <div className="video-loading-overlay">
+                        <div className="loading-spinner"></div>
+                        <p>Chargement de la vidéo...</p>
+                      </div>
+                    )}
+                    
+                    {videoError && (
+                      <div className="video-error-overlay">
+                        <span className="error-icon">❌</span>
+                        <p>Erreur de chargement de la vidéo</p>
+                        <button 
+                          onClick={() => {
+                            setVideoError(false);
+                            setIsVideoLoading(true);
+                          }}
+                          className="retry-btn"
+                        >
+                          Réessayer
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  
                   <button onClick={toggleVideo} className="close-video-btn">
                     ✕ Fermer la vidéo
                   </button>
@@ -185,7 +232,7 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
             </div>
           </div>
 
-          {/* SECTION SANS CODE SNIPPET */}
+          {/* SECTION PROCESSUS DE DÉVELOPPEMENT */}
           <div className="block-section">
             <h2 className="section-title">Processus de Développement</h2>
             <div className="development-process">
