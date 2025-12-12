@@ -1,4 +1,4 @@
-// components/Navbar.jsx - CODE COMPLET avec "Welcome"
+// components/Navbar.jsx - MODIFIÉ (ajout de Certifications)
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
@@ -9,14 +9,13 @@ const Navbar = ({ activeSection, setActiveSection }) => {
   const navItems = [
     { id: 'home', label: 'Accueil', path: '/' },
     { id: 'projects', label: 'Projets', path: '/projects' },
-    { id: 'skills', label: 'Compétences', path: '/skills' }
+    { id: 'skills', label: 'Compétences', path: '/skills' },
+    { id: 'certifications', label: 'Certifications', path: '/certifications' } // Nouvel élément
   ];
 
-  // Déterminer la section active basée sur l'URL
   React.useEffect(() => {
     const currentPath = location.pathname;
     
-    // Si c'est une page de projet détail, on reste sur "projects"
     if (currentPath.includes('/project/')) {
       setActiveSection('projects');
       return;
