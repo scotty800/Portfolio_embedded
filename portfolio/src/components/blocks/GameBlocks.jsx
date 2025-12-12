@@ -158,6 +158,7 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
                     title="Mini Racer Gameplay Demo"
                     controls
                     autoPlay
+                    muted
                     className="fullscreen-video"
                   >
                     Votre navigateur ne supporte pas la lecture de vidéos.
