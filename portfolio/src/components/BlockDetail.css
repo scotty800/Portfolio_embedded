@@ -975,3 +975,164 @@
     justify-content: space-between;
   }
 }
+
+/* Ajoutez ceci à votre fichier CSS existant */
+
+/* Indicateur Cloudinary */
+.cloudinary-note {
+  background: #f0f8ff;
+  border-left: 4px solid #4a90e2;
+  padding: 10px 15px;
+  margin: 15px 0;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.cloudinary-note small {
+  color: #666;
+}
+
+/* États de chargement vidéo */
+.video-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 10;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.video-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 10;
+  padding: 20px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.retry-btn {
+  margin-top: 15px;
+  padding: 8px 20px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+}
+
+.retry-btn:hover {
+  background: #2980b9;
+}
+
+/* GameBlocks spécifique */
+.video-loading-overlay,
+.video-error-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  z-index: 20;
+  border-radius: 8px;
+}
+
+/* Cloudinary Iframe Player */
+.cloudinary-player-container {
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.cloudinary-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Améliorations responsive */
+@media (max-width: 768px) {
+  .video-container-fixed {
+    height: 250px;
+  }
+  
+  .fullscreen-video {
+    max-height: 60vh;
+  }
+  
+  .cloudinary-player-container {
+    padding-bottom: 75%; /* 4:3 pour mobile */
+  }
+}
+
+/* Styles pour les vidéos directes */
+.responsive-video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+  border-radius: 8px;
+}
+
+.video-wrapper {
+  position: relative;
+  width: 100%;
+  height: 400px;
+  background: #000;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .video-wrapper {
+    height: 250px;
+  }
+}
