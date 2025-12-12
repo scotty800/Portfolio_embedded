@@ -1,4 +1,4 @@
-// components/blocks/GameBlocks.jsx - VERSION SANS TEXTE SOUS LES IMAGES
+// components/blocks/GameBlocks.jsx - VIDÉO DANS PUBLIC
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -13,8 +13,8 @@ import physicsSimulationImg from '../../assets/projects/game/physics-simulation-
 import audioDesignImg from '../../assets/projects/game/audio-design-optimized.jpg';
 import optimizationToolsImg from '../../assets/projects/game/optimization-tools-optimized.jpg';
 
-// Import de la vidéo
-import gameDemoVideo from '../../assets/videos/game/mini-racer-demo-optimized.mp4';
+// VIDÉO DÉPLACÉE DANS PUBLIC
+const gameDemoVideo = '/videos/game/mini-racer-demo-optimized.mp4';
 
 const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
   const [showVideo, setShowVideo] = useState(false);
