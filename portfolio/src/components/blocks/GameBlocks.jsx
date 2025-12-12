@@ -1,4 +1,4 @@
-// components/blocks/GameBlocks.jsx - VERSION SANS TEXTE SOUS LES IMAGES
+// components/blocks/GameBlocks.jsx - VERSION SANS TEXTE SOUS LES IMAGES AVEC CHEMIN STATIQUE
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -12,9 +12,6 @@ import uiDesignImg from '../../assets/projects/game/ui-design-optimized.jpg';
 import physicsSimulationImg from '../../assets/projects/game/physics-simulation-optimized.jpg';
 import audioDesignImg from '../../assets/projects/game/audio-design-optimized.jpg';
 import optimizationToolsImg from '../../assets/projects/game/optimization-tools-optimized.jpg';
-
-// Import de la vidéo
-import gameDemoVideo from '../../assets/videos/game/mini-racer-demo-optimized.mp4';
 
 const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
   const [showVideo, setShowVideo] = useState(false);
@@ -53,7 +50,7 @@ const GameBlocks = ({ projectId, blockId, nextBlock, prevBlock }) => {
         { src: audioDesignImg, alt: "Design sonore et musique" },
         { src: optimizationToolsImg, alt: "Outils d'optimisation" }
       ],
-      videoLink: gameDemoVideo,
+      videoLink: "/videos/game/mini-racer-demo-optimized.mp4",
       challenges: [
         "Synchronisation parfaite multijoueur en réseau",
         "Physique réaliste des véhicules et drift",
