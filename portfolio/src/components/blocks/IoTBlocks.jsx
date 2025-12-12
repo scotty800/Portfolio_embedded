@@ -1178,9 +1178,6 @@ void loop() {
             
             <div className="video-description">
               <p>{blockData.videoDescription}</p>
-              <p className="cloudinary-note">
-                <small>Vidéo hébergée sur Cloudinary pour une lecture optimale</small>
-              </p>
             </div>
             
             <div className="video-container-fixed">
