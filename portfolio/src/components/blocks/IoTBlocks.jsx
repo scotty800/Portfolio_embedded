@@ -18,7 +18,7 @@ const CLOUDINARY_BASE_URL = `https://res.cloudinary.com/${CLOUDINARY_CLOUD_NAME}
 const videos = {
   1: `${CLOUDINARY_BASE_URL}/v1765551965/cheerlights-mqtt_rozkql`,
   2: `${CLOUDINARY_BASE_URL}/v1765551966/esp32-web-server_exvug3`,
-  3: `${CLOUDINARY_BASE_URL}/v1765551966/mqtt-advanced.mp4_lrew1f`,
+  3: `${CLOUDINARY_BASE_URL}/v1765551966/mqtt-advanced`,
   4: `${CLOUDINARY_BASE_URL}/v1765551963/environment-monitoring_qd2suv`,
   5: `${CLOUDINARY_BASE_URL}/v1765551961/adafruit-io_sckscm`,
   6: `${CLOUDINARY_BASE_URL}/v1765551961/ble-control_gqccm8`
